@@ -1,0 +1,124 @@
+import { useState } from "react";
+import { ArrowDown, Check, ChevronRight, CircleOff, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, Sparkles, Utensils, WashingMachine } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { BervonaLogo, BervonaMark } from "@/components/bervona-logo";
+import { CartDrawer } from "@/components/cart-drawer";
+import { useCartSync } from "@/hooks/use-cart-sync";
+import { useCartStore } from "@/stores/cart-store";
+import type { ShopifyProduct, ShopifyVariant } from "@/lib/shopify";
+import heroImage from "@/assets/bervona-hero.jpg";
+import lifestyleImage from "@/assets/bervona-lifestyle.jpg";
+
+const bundleCopy = [
+  { match: "1", units: "1 unidad", price: "21,54 €", note: "Para tu compañero" },
+  { match: "2", units: "2 unidades", price: "38,99 €", note: "Ahorras 4,09 €" },
+  { match: "3", units: "3 unidades", price: "54,99 €", note: "Mejor precio por unidad", popular: true },
+];
+
+const features = [
+  { icon: Droplets, title: "Cuenco instantáneo", text: "Levanta el lateral de silicona y sirve al momento." },
+  { icon: Utensils, title: "Agua o comida", text: "Un solo accesorio para hidratar o dar un snack." },
+  { icon: LockKeyhole, title: "Cierre antigoteo", text: "Tapa segura para llevarla sin sustos en la mochila." },
+  { icon: Feather, title: "Solo 162 g", text: "Ligera para ti, capacidad suficiente para su paseo." },
+  { icon: WashingMachine, title: "Lavavajillas", text: "Limpieza sencilla después de cada aventura." },
+  { icon: PackageCheck, title: "Siempre a mano", text: "Cordón y mosquetón para correa, mochila o cinturón." },
+];
+
+function scrollToPacks() { document.querySelector("#packs")?.scrollIntoView({ behavior: "smooth" }); }
+
+export function BervonaStore({ product }: { product: ShopifyProduct }) {
+  useCartSync();
+  const variants = product.node.variants.edges.map((edge) => edge.node);
+  const [selected, setSelected] = useState<ShopifyVariant>(variants[2] ?? variants[0]);
+  const [cartOpen, setCartOpen] = useState(false);
+  const { addItem, isLoading, error } = useCartStore();
+
+  const addSelected = async () => {
+    if (!selected) return;
+    const added = await addItem({ product, variantId: selected.id, variantTitle: selected.title, price: selected.price, quantity: 1, selectedOptions: selected.selectedOptions });
+    if (added) setCartOpen(true);
+  };
+
+  return (
+    <main className="overflow-hidden">
+      <header className="site-nav">
+        <a href="#top" aria-label="Bervona, inicio"><BervonaMark /></a>
+        <nav aria-label="Navegación principal" className="hidden items-center gap-8 md:flex">
+          <a href="#beneficios">Por qué Bervona</a><a href="#como-funciona">Cómo funciona</a><a href="#faq">FAQ</a>
+        </nav>
+        <CartDrawer />
+      </header>
+
+      <section id="top" className="hero-section">
+        <div className="hero-copy">
+          <span className="eyebrow">285 ml · acero inoxidable · sin BPA</span>
+          <h1>Todo lo que necesita.<br /><em>Nada que te pese.</em></h1>
+          <p>Agua y comida para tu perro en cualquier paseo, dentro de una botella compacta que se convierte en cuenco.</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <Button variant="hero" size="xl" onClick={scrollToPacks}>Elegir mi pack <ChevronRight /></Button>
+            <span className="text-sm text-muted-foreground">Desde 21,54 €</span>
+          </div>
+        </div>
+        <div className="hero-visual">
+          <div className="product-halo" />
+          <img src={heroImage} alt="Botella Bervona esférica de acero con cuenco rosa plegable" width={1408} height={1408} fetchPriority="high" />
+          <span className="hero-note note-one"><strong>162 g</strong> ultraligera</span>
+          <span className="hero-note note-two"><strong>2 en 1</strong> agua + comida</span>
+        </div>
+        <button className="scroll-cue" onClick={() => document.querySelector("#problema")?.scrollIntoView({ behavior: "smooth" })} aria-label="Ver más"><ArrowDown /></button>
+      </section>
+
+      <section id="problema" className="problem-band">
+        <p className="eyebrow">Un paseo debería sentirse ligero</p>
+        <h2>Menos cosas. Más camino.</h2>
+        <div className="problem-grid">
+          {[{ n: "01", t: "Sin agua a mano", d: "El calor y los paseos largos no siempre avisan." }, { n: "02", t: "Cuencos que estorban", d: "Ocupan espacio y acaban olvidados en casa." }, { n: "03", t: "Botellas que gotean", d: "Mochilas mojadas y agua desperdiciada." }].map((item) => <article key={item.n}><span>{item.n}</span><h3>{item.t}</h3><p>{item.d}</p></article>)}
+        </div>
+      </section>
+
+      <section id="beneficios" className="feature-section section-shell">
+        <div className="section-heading"><div><p className="eyebrow">Diseñada para salir</p><h2>Una esfera.<br />Seis soluciones.</h2></div><p>Acero resistente por fuera. Silicona suave y funcional por dentro. Todo unido, todo listo.</p></div>
+        <div className="feature-grid">{features.map(({ icon: Icon, title, text }) => <article key={title}><Icon /><h3>{title}</h3><p>{text}</p></article>)}</div>
+      </section>
+
+      <section id="como-funciona" className="how-section">
+        <div className="how-photo"><img src={lifestyleImage} loading="lazy" width={1600} height={1104} alt="Perro junto a la botella Bervona y su cuenco rosa" /></div>
+        <div className="how-copy"><p className="eyebrow">Lista en segundos</p><h2>Del paseo al cuenco,<br />en cuatro gestos.</h2>
+          <ol>{["Levanta el panel de silicona", "Sirve agua o comida", "Recupera el agua sobrante", "Pliega, cierra y sigue"].map((step, i) => <li key={step}><span>{String(i + 1).padStart(2, "0")}</span><p>{step}</p></li>)}</ol>
+        </div>
+      </section>
+
+      <section id="packs" className="pack-section section-shell">
+        <div className="pack-intro"><p className="eyebrow">Elige tu pack</p><h2>Una para cada aventura.</h2><p>Los tres packs son variantes reales de tu producto en Shopify.</p></div>
+        <div className="pack-grid">
+          {bundleCopy.map((pack) => {
+            const variant = variants.find((entry) => entry.title.includes(pack.match));
+            if (!variant) return null;
+            const active = selected?.id === variant.id;
+            return <button key={pack.units} className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => setSelected(variant)} aria-pressed={active}>
+              {pack.popular && <span className="popular-label">Mejor precio</span>}<span className="radio-dot">{active && <Check />}</span><h3>{pack.units}</h3><strong>{pack.price}</strong><p>{pack.note}</p><small>{pack.match === "1" ? "21,54 €" : pack.match === "2" ? "19,50 € / unidad" : "18,33 € / unidad"}</small>
+            </button>;
+          })}
+        </div>
+        <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : "Agotado"}</Button><p>Envío calculado en el checkout · Pago seguro con Shopify</p>{error && <p className="text-destructive">{error}</p>}</div>
+      </section>
+
+      <section className="social-section section-shell">
+        <div className="social-frame"><Sparkles /><p className="eyebrow">La comunidad empieza contigo</p><h2>Sé el primero en probarla.</h2><p>Aún no hay reseñas. Queremos que las primeras palabras sobre Bervona sean reales.</p></div>
+      </section>
+
+      <section id="faq" className="faq-section section-shell">
+        <div><p className="eyebrow">Preguntas frecuentes</p><h2>Todo claro antes de salir.</h2></div>
+        <Accordion type="single" collapsible className="faq-list">
+          {[{ q: "¿Qué capacidad tiene?", a: "Cada botella tiene 285 ml (10 oz), una medida compacta pensada para paseos con perros pequeños y medianos." }, { q: "¿Para qué tamaño de perro está pensada?", a: "Funciona especialmente bien para perros pequeños y medianos. Para perros grandes o rutas largas, recomendamos llevar más de una unidad." }, { q: "¿Se puede lavar en lavavajillas?", a: "Sí. La botella y el cuenco están pensados para una limpieza cómoda en lavavajillas." }, { q: "¿Realmente no gotea?", a: "Cuenta con una tapa de cierre seguro y sistema antigoteo. Asegúrate de cerrarla por completo antes de guardarla." }, { q: "¿Cuánto tarda el envío a España?", a: "El plazo exacto y el coste de envío se muestran en el checkout según tu dirección. El envío es de pago." }].map(({ q, a }) => <AccordionItem value={q} key={q}><AccordionTrigger>{q}</AccordionTrigger><AccordionContent>{a}</AccordionContent></AccordionItem>)}
+        </Accordion>
+      </section>
+
+      <section className="final-cta"><BervonaMark /><p className="eyebrow">Próximo paseo</p><h2>Solo lleva las ganas.</h2><Button variant="light" size="xl" onClick={scrollToPacks}>Elegir mi Bervona <ChevronRight /></Button></section>
+      <footer><BervonaLogo /><p>Hidratación sencilla para perros felices.</p><div><Link to="/product/$handle" params={{ handle: product.node.handle }}>Producto</Link><a href="#faq">Preguntas frecuentes</a></div><small>© 2026 Bervona · España</small></footer>
+      <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
+    </main>
+  );
+}
