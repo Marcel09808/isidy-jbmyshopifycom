@@ -117,7 +117,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
       </section>
 
       <section className="final-cta"><BervonaMark /><p className="eyebrow">Próximo paseo</p><h2>Solo lleva las ganas.</h2><Button variant="light" size="xl" onClick={scrollToPacks}>Elegir mi Bervona <ChevronRight /></Button></section>
-      <footer><BervonaLogo /><p>Hidratación sencilla para perros felices.</p><div><Link to="/producto/$handle" params={{ handle: product.node.handle }}>Ficha del producto</Link><a href="#faq">Preguntas frecuentes</a></div><small>© 2026 Bervona · España</small></footer>
+      <footer><BervonaLogo /><p>Hidratación sencilla para perros felices.</p><div><Link to="/" hash="packs">Packs</Link><a href="#faq">Preguntas frecuentes</a></div><small>© 2026 Bervona · España</small></footer>
       <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
     </main>
   );
