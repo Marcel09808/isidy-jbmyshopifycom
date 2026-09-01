@@ -31,7 +31,7 @@ function scrollToPacks() { document.querySelector("#packs")?.scrollIntoView({ be
 export function BervonaStore({ product }: { product: ShopifyProduct }) {
   useCartSync();
   const variants = product.node.variants.edges.map((edge) => edge.node);
-  const [selected, setSelected] = useState<ShopifyVariant>(variants[2] ?? variants[0]);
+  const [selected, setSelected] = useState<ShopifyVariant | undefined>(variants[2] ?? variants[0]);
   const [cartOpen, setCartOpen] = useState(false);
   const { addItem, isLoading, error } = useCartStore();
 
@@ -117,7 +117,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
       </section>
 
       <section className="final-cta"><BervonaMark /><p className="eyebrow">Próximo paseo</p><h2>Solo lleva las ganas.</h2><Button variant="light" size="xl" onClick={scrollToPacks}>Elegir mi Bervona <ChevronRight /></Button></section>
-      <footer><BervonaLogo /><p>Hidratación sencilla para perros felices.</p><div><Link to="/product/$handle" params={{ handle: product.node.handle }}>Producto</Link><a href="#faq">Preguntas frecuentes</a></div><small>© 2026 Bervona · España</small></footer>
+      <footer><BervonaLogo /><p>Hidratación sencilla para perros felices.</p><div><Link to="/producto/$handle" params={{ handle: product.node.handle }}>Ficha del producto</Link><a href="#faq">Preguntas frecuentes</a></div><small>© 2026 Bervona · España</small></footer>
       <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
     </main>
   );
