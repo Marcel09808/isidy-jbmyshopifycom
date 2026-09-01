@@ -1,14 +1,10 @@
-import { Droplets } from "lucide-react";
+import markAsset from "@/assets/bervona-mark.png.asset.json";
+import logoAsset from "@/assets/bervona-logo.png.asset.json";
 
 export function BervonaMark({ className = "" }: { className?: string }) {
-  return (
-    <span className={`brand-mark ${className}`} aria-hidden="true">
-      <Droplets strokeWidth={1.8} />
-      <span className="brand-paw">●</span>
-    </span>
-  );
+  return <img src={markAsset.url} alt="Bervona" className={`h-11 w-auto ${className}`} width={44} height={44} />;
 }
 
-export function BervonaLogo() {
-  return <span className="inline-flex items-center gap-3"><BervonaMark /><span className="font-display text-2xl font-semibold tracking-normal">BERVONA</span></span>;
+export function BervonaLogo({ className = "" }: { className?: string }) {
+  return <img src={logoAsset.url} alt="Bervona" className={`h-14 w-auto ${className}`} width={220} height={66} />;
 }
