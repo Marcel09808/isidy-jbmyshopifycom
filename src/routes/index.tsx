@@ -12,13 +12,13 @@ const productQuery = queryOptions({
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Bervona — Botella con cuenco plegable para tu perro" },
+      { title: "Bervona Drop — Botella de agua para perro con cuenco integrado" },
       {
         name: "description",
         content:
-          "Botella esférica de acero inoxidable de 285 ml con cuenco de silicona plegable: agua y comida para tu perro en cualquier paseo.",
+          "Bervona Drop: botella esférica de acero inoxidable de 285 ml con cuenco de silicona plegable integrado. Agua y comida para tu perro en paseo y viaje.",
       },
-      { property: "og:title", content: "Bervona — Botella con cuenco plegable para tu perro" },
+      { property: "og:title", content: "Bervona Drop — Botella de agua para perro con cuenco integrado" },
       {
         property: "og:description",
         content: "285 ml, 186 g, antigoteo y apta para lavavajillas. Packs de 1, 2 y 3 unidades.",

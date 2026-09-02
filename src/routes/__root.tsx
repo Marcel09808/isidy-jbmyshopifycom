@@ -77,18 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Bervona — Botella con cuenco para tu perro" },
+      { title: "Bervona Drop — Botella de agua para perro con cuenco integrado" },
       {
         name: "description",
         content:
-          "Botella portátil de acero con cuenco de silicona plegable para pasear con tu perro.",
+          "Botella portátil de acero con cuenco de silicona integrado para pasear y viajar con tu perro. Una marca Bervona.",
       },
       { name: "author", content: "Bervona" },
-      { property: "og:title", content: "Bervona — Botella con cuenco para tu perro" },
+      { property: "og:title", content: "Bervona Drop — Botella de agua para perro con cuenco integrado" },
       {
         property: "og:description",
         content:
-          "Botella portátil de acero con cuenco de silicona plegable para pasear con tu perro.",
+          "Botella portátil de acero con cuenco de silicona integrado para pasear y viajar con tu perro. Una marca Bervona.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
