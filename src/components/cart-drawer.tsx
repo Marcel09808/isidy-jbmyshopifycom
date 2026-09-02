@@ -40,7 +40,7 @@ export function CartDrawer({ open, onOpenChange }: { open?: boolean; onOpenChang
                 <article key={item.variantId} className="flex gap-4 border-b border-border pb-5">
                   {item.product.node.images.edges[0]?.node.url ? <img className="size-20 rounded-sm object-cover" src={item.product.node.images.edges[0].node.url} alt={item.product.node.title} /> : <div className="size-20 rounded-sm bg-secondary" />}
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-medium">Bervona</h3>
+                    <h3 className="truncate font-medium">{item.product.node.title}</h3>
                     <p className="text-sm text-muted-foreground">{item.variantTitle}</p>
                     <p className="mt-1 font-semibold">{euros.format(Number(item.price.amount))}</p>
                     <div className="mt-3 flex items-center gap-1">
