@@ -46,14 +46,14 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
       <header className="site-nav">
         <a href="#top" aria-label="Bervona, inicio"><BervonaMark /></a>
         <nav aria-label="Navegación principal" className="hidden items-center gap-8 md:flex">
-          <a href="#beneficios">Por qué Bervona</a><a href="#como-funciona">Cómo funciona</a><a href="#faq">FAQ</a>
+          <a href="#beneficios">Por qué Drop</a><a href="#como-funciona">Cómo funciona</a><a href="#faq">FAQ</a>
         </nav>
         <CartDrawer />
       </header>
 
       <section id="top" className="hero-section">
         <div className="hero-copy">
-          <span className="eyebrow">285 ml · acero inoxidable · sin BPA</span>
+          <span className="eyebrow">Bervona Drop · 285 ml · acero inoxidable · sin BPA</span>
           <h1>Todo lo que necesita.<br /><em>Nada que te pese.</em></h1>
           <p>Agua y comida para tu perro en cualquier paseo, dentro de una botella compacta que se convierte en cuenco.</p>
           <div className="flex flex-wrap items-center gap-4">
@@ -63,7 +63,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
         </div>
         <div className="hero-visual">
           <div className="product-halo" />
-          <img src={heroImage} alt="Botella Bervona esférica de acero con cuenco rosa plegable" width={1408} height={1408} fetchPriority="high" />
+          <img src={heroImage} alt="Botella Bervona Drop esférica de acero con cuenco rosa plegable" width={1408} height={1408} fetchPriority="high" />
           <span className="hero-note note-one"><strong>186 g</strong> ultraligera</span>
           <span className="hero-note note-two"><strong>2 en 1</strong> agua + comida</span>
         </div>
@@ -84,7 +84,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
       </section>
 
       <section id="como-funciona" className="how-section">
-        <div className="how-photo"><img src={lifestyleImage} loading="lazy" width={1600} height={1104} alt="Perro junto a la botella Bervona y su cuenco rosa" /></div>
+        <div className="how-photo"><img src={lifestyleImage} loading="lazy" width={1600} height={1104} alt="Perro junto a la botella Bervona Drop y su cuenco rosa" /></div>
         <div className="how-copy"><p className="eyebrow">Lista en segundos</p><h2>Del paseo al cuenco,<br />en cuatro gestos.</h2>
           <ol>{["Despliega la silicona integrada", "Vierte el agua en el cuenco", "Recupera el agua sobrante", "Pliega, cierra y sigue"].map((step, i) => <li key={step}><span>{String(i + 1).padStart(2, "0")}</span><p>{step}</p></li>)}</ol>
         </div>
@@ -106,7 +106,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
       </section>
 
       <section className="social-section section-shell">
-        <div className="social-frame"><Sparkles /><p className="eyebrow">La comunidad empieza contigo</p><h2>Sé el primero en probarla.</h2><p>Aún no hay reseñas. Queremos que las primeras palabras sobre Bervona sean reales.</p></div>
+        <div className="social-frame"><Sparkles /><p className="eyebrow">La comunidad empieza contigo</p><h2>Sé el primero en probarla.</h2><p>Aún no hay reseñas. Queremos que las primeras palabras sobre la Bervona Drop sean reales.</p></div>
       </section>
 
       <section id="faq" className="faq-section section-shell">
@@ -116,7 +116,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
         </Accordion>
       </section>
 
-      <section className="final-cta"><BervonaMark /><p className="eyebrow">Próximo paseo</p><h2>Solo lleva las ganas.</h2><Button variant="light" size="xl" onClick={scrollToPacks}>Elegir mi Bervona <ChevronRight /></Button></section>
+      <section className="final-cta"><BervonaMark /><p className="eyebrow">Próximo paseo</p><h2>Solo lleva las ganas.</h2><Button variant="light" size="xl" onClick={scrollToPacks}>Elegir mi Drop <ChevronRight /></Button></section>
       <footer><BervonaLogo /><p>Hidratación sencilla para perros felices.</p><div><Link to="/" hash="packs">Packs</Link><a href="#faq">Preguntas frecuentes</a></div><small>© 2026 Bervona · España</small></footer>
       <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
     </main>
