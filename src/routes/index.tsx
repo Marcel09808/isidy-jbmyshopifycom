@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Bervona — Botella con cuenco plegable para tu perro" },
       {
         property: "og:description",
-        content: "285 ml, 162 g, antigoteo y apta para lavavajillas. Packs de 1, 2 y 3 unidades.",
+        content: "285 ml, 186 g, antigoteo y apta para lavavajillas. Packs de 1, 2 y 3 unidades.",
       },
     ],
   }),
