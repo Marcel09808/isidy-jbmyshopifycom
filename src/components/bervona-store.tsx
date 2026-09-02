@@ -18,10 +18,10 @@ const bundleCopy = [
 ];
 
 const features = [
-  { icon: Droplets, title: "Cuenco instantáneo", text: "Levanta el lateral de silicona y sirve al momento." },
+  { icon: Droplets, title: "Cuenco instantáneo", text: "Despliega la silicona integrada y sirve al momento." },
   { icon: Utensils, title: "Agua o comida", text: "Un solo accesorio para hidratar o dar un snack." },
   { icon: LockKeyhole, title: "Cierre antigoteo", text: "Tapa segura para llevarla sin sustos en la mochila." },
-  { icon: Feather, title: "Solo 162 g", text: "Ligera para ti, capacidad suficiente para su paseo." },
+  { icon: Feather, title: "Solo 186 g", text: "Ligera para ti, capacidad suficiente para su paseo." },
   { icon: WashingMachine, title: "Lavavajillas", text: "Limpieza sencilla después de cada aventura." },
   { icon: PackageCheck, title: "Siempre a mano", text: "Cordón y mosquetón para correa, mochila o cinturón." },
 ];
@@ -64,7 +64,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
         <div className="hero-visual">
           <div className="product-halo" />
           <img src={heroImage} alt="Botella Bervona esférica de acero con cuenco rosa plegable" width={1408} height={1408} fetchPriority="high" />
-          <span className="hero-note note-one"><strong>162 g</strong> ultraligera</span>
+          <span className="hero-note note-one"><strong>186 g</strong> ultraligera</span>
           <span className="hero-note note-two"><strong>2 en 1</strong> agua + comida</span>
         </div>
         <button className="scroll-cue" onClick={() => document.querySelector("#problema")?.scrollIntoView({ behavior: "smooth" })} aria-label="Ver más"><ArrowDown /></button>
@@ -86,7 +86,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
       <section id="como-funciona" className="how-section">
         <div className="how-photo"><img src={lifestyleImage} loading="lazy" width={1600} height={1104} alt="Perro junto a la botella Bervona y su cuenco rosa" /></div>
         <div className="how-copy"><p className="eyebrow">Lista en segundos</p><h2>Del paseo al cuenco,<br />en cuatro gestos.</h2>
-          <ol>{["Levanta el panel de silicona", "Sirve agua o comida", "Recupera el agua sobrante", "Pliega, cierra y sigue"].map((step, i) => <li key={step}><span>{String(i + 1).padStart(2, "0")}</span><p>{step}</p></li>)}</ol>
+          <ol>{["Despliega la silicona integrada", "Vierte el agua en el cuenco", "Recupera el agua sobrante", "Pliega, cierra y sigue"].map((step, i) => <li key={step}><span>{String(i + 1).padStart(2, "0")}</span><p>{step}</p></li>)}</ol>
         </div>
       </section>
 
