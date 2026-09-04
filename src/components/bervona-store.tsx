@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowDown, Check, ChevronRight, CircleOff, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, Sparkles, Utensils, WashingMachine } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowDown, Check, ChevronRight, CircleOff, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, Sparkles, Star, Utensils, WashingMachine } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,21 @@ import { useCartStore } from "@/stores/cart-store";
 import type { ShopifyProduct, ShopifyVariant } from "@/lib/shopify";
 import heroImage from "@/assets/bervona-hero.jpg";
 import lifestyleImage from "@/assets/bervona-lifestyle.jpg";
+
+const reviews = [
+  {
+    author: "Michaela",
+    text: "Es pequeña y cómoda de manejar. A mi perro le encanta. Perfecta para los paseos cuando hace calor. Eso sí, no es para una excursión de todo el día porque el recipiente es pequeño.",
+  },
+  {
+    author: "Patrizia",
+    text: "Tal como se describe. Una botellita pequeña y cómoda para llevar durante los paseos por la ciudad.",
+  },
+  {
+    author: "Roberto",
+    text: "Agua siempre fresca y súper cómoda. Muy buen producto y muy práctico.",
+  },
+];
 
 const bundleCopy = [
   { match: "1", units: "1 unidad", price: "21,54 €", note: "Para tu compañero" },
