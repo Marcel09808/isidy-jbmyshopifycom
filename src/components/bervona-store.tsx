@@ -73,7 +73,8 @@ function ReviewsSection() {
   return (
     <section ref={ref} className={`reviews-section section-shell ${visible ? "is-visible" : ""}`}>
       <div className="reviews-intro">
-        <p className="eyebrow">Lo que dicen quienes ya lo han probado</p>
+        <p className="eyebrow">Opiniones</p>
+        <h2>Lo que dicen quienes ya lo han probado</h2>
         <span className="reviews-tag">Opiniones sobre el producto</span>
       </div>
       <div className="reviews-track">
