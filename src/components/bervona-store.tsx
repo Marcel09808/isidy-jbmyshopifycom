@@ -137,7 +137,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
         </div>
       </section>
 
-      <section id="packs" className="pack-section section-shell">
+      <section id="packs" ref={packsRef} className="pack-section section-shell">
         <div className="pack-intro"><p className="eyebrow">Elige tu pack</p><h2>Una para cada aventura.</h2><p>Los tres packs son variantes reales de tu producto en Shopify.</p></div>
         <div className="pack-grid">
           {bundleCopy.map((pack) => {
@@ -152,9 +152,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
         <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : "Agotado"}</Button><p>Envío calculado en el checkout · Pago seguro con Shopify</p>{error && <p className="text-destructive">{error}</p>}</div>
       </section>
 
-      <section className="social-section section-shell">
-        <div className="social-frame"><Sparkles /><p className="eyebrow">La comunidad empieza contigo</p><h2>Sé el primero en probarla.</h2><p>Aún no hay reseñas. Queremos que las primeras palabras sobre la Bervona Drop sean reales.</p></div>
-      </section>
+      <ReviewsSection />
 
       <section id="faq" className="faq-section section-shell">
         <div><p className="eyebrow">Preguntas frecuentes</p><h2>Todo claro antes de salir.</h2></div>
