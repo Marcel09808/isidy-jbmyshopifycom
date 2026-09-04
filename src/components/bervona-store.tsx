@@ -175,7 +175,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
             </button>;
           })}
         </div>
-        <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : "Agotado"}</Button><p>Envío calculado en el checkout · Pago seguro con Shopify</p>{error && <p className="text-destructive">{error}</p>}</div>
+        <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : "Agotado"}</Button><p>Envío gratis · Pago seguro con Shopify</p>{error && <p className="text-destructive">{error}</p>}</div>
       </section>
 
       <ReviewsSection />
@@ -183,11 +183,11 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
       <section id="faq" className="faq-section section-shell">
         <div><p className="eyebrow">Preguntas frecuentes</p><h2>Todo claro antes de salir.</h2></div>
         <Accordion type="single" collapsible className="faq-list">
-          {[{ q: "¿Qué capacidad tiene?", a: "Cada botella tiene 285 ml (10 oz), una medida compacta pensada para paseos con perros pequeños y medianos." }, { q: "¿Para qué tamaño de perro está pensada?", a: "Funciona especialmente bien para perros pequeños y medianos. Para perros grandes o rutas largas, recomendamos llevar más de una unidad." }, { q: "¿Se puede lavar en lavavajillas?", a: "Sí. La botella y el cuenco están pensados para una limpieza cómoda en lavavajillas." }, { q: "¿Realmente no gotea?", a: "Cuenta con una tapa de cierre seguro y sistema antigoteo. Asegúrate de cerrarla por completo antes de guardarla." }, { q: "¿Cuánto tarda el envío a España?", a: "El plazo exacto y el coste de envío se muestran en el checkout según tu dirección. El envío es de pago." }].map(({ q, a }) => <AccordionItem value={q} key={q}><AccordionTrigger>{q}</AccordionTrigger><AccordionContent>{a}</AccordionContent></AccordionItem>)}
+          {[{ q: "¿Qué capacidad tiene?", a: "Cada botella tiene 285 ml (10 oz), una medida compacta pensada para paseos con perros pequeños y medianos." }, { q: "¿Para qué tamaño de perro está pensada?", a: "Funciona especialmente bien para perros pequeños y medianos. Para perros grandes o rutas largas, recomendamos llevar más de una unidad." }, { q: "¿Se puede lavar en lavavajillas?", a: "Sí. La botella y el cuenco están pensados para una limpieza cómoda en lavavajillas." }, { q: "¿Realmente no gotea?", a: "Cuenta con una tapa de cierre seguro y sistema antigoteo. Asegúrate de cerrarla por completo antes de guardarla." }, { q: "¿Cuánto tarda el envío a España?", a: "El plazo exacto se muestra en el checkout según tu dirección. Envío gratis." }].map(({ q, a }) => <AccordionItem value={q} key={q}><AccordionTrigger>{q}</AccordionTrigger><AccordionContent>{a}</AccordionContent></AccordionItem>)}
         </Accordion>
       </section>
 
-      <section className="final-cta"><BervonaMark /><p className="eyebrow">Próximo paseo</p><h2>Solo lleva las ganas.</h2><Button variant="light" size="xl" onClick={scrollToPacks}>Elegir mi Drop <ChevronRight /></Button></section>
+      <section className="final-cta"><BervonaMark /><p className="eyebrow">Próximo paseo</p><h2>Hidratación a mano, donde vayas.</h2><Button variant="light" size="xl" onClick={scrollToPacks}>Elegir mi Drop <ChevronRight /></Button></section>
       <footer><BervonaLogo /><p>Hidratación sencilla para perros felices.</p><div><Link to="/" hash="packs">Packs</Link><a href="#faq">Preguntas frecuentes</a></div><small>© 2026 Bervona · España</small></footer>
       <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
     </main>

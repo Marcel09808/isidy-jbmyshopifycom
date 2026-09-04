@@ -55,7 +55,7 @@ export function CartDrawer({ open, onOpenChange }: { open?: boolean; onOpenChang
             </div>
             <div className="space-y-4 border-t border-border pt-5">
               <div className="flex justify-between text-lg font-semibold"><span>Total</span><span>{euros.format(total)}</span></div>
-              <p className="text-xs text-muted-foreground">El envío se calcula en el checkout.</p>
+              <p className="text-xs text-muted-foreground">Envío gratis.</p>
               <Button variant="hero" size="xl" className="w-full" disabled={!checkoutUrl || isLoading || isSyncing} onClick={() => checkoutUrl && window.open(checkoutUrl, "_blank")}>
                 {isLoading || isSyncing ? <Loader2 className="animate-spin" /> : <ShoppingBag />} Ir al checkout
               </Button>
