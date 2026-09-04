@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowDown, Check, ChevronRight, CircleOff, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, Sparkles, Utensils, WashingMachine } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowDown, Check, ChevronRight, CircleOff, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, Sparkles, Star, Utensils, WashingMachine } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,21 @@ import { useCartStore } from "@/stores/cart-store";
 import type { ShopifyProduct, ShopifyVariant } from "@/lib/shopify";
 import heroImage from "@/assets/bervona-hero.jpg";
 import lifestyleImage from "@/assets/bervona-lifestyle.jpg";
+
+const reviews = [
+  {
+    author: "Michaela",
+    text: "Es pequeña y cómoda de manejar. A mi perro le encanta. Perfecta para los paseos cuando hace calor. Eso sí, no es para una excursión de todo el día porque el recipiente es pequeño.",
+  },
+  {
+    author: "Patrizia",
+    text: "Tal como se describe. Una botellita pequeña y cómoda para llevar durante los paseos por la ciudad.",
+  },
+  {
+    author: "Roberto",
+    text: "Agua siempre fresca y súper cómoda. Muy buen producto y muy práctico.",
+  },
+];
 
 const bundleCopy = [
   { match: "1", units: "1 unidad", price: "21,54 €", note: "Para tu compañero" },
@@ -26,7 +41,58 @@ const features = [
   { icon: PackageCheck, title: "Siempre a mano", text: "Cordón y mosquetón para correa, mochila o cinturón." },
 ];
 
-function scrollToPacks() { document.querySelector("#packs")?.scrollIntoView({ behavior: "smooth" }); }
+function scrollToElement(el: HTMLElement | null, offset = 80) {
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top, behavior: "smooth" });
+}
+
+function useRevealObserver() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+  return { ref, visible };
+}
+
+function ReviewsSection() {
+  const { ref, visible } = useRevealObserver();
+  return (
+    <section ref={ref} className={`reviews-section section-shell ${visible ? "is-visible" : ""}`}>
+      <div className="reviews-intro">
+        <p className="eyebrow">Opiniones</p>
+        <h2>Lo que dicen quienes ya lo han probado</h2>
+        <span className="reviews-tag">Opiniones sobre el producto</span>
+      </div>
+      <div className="reviews-track">
+        {reviews.map((review) => (
+          <article key={review.author} className="review-card">
+            <div className="review-stars" aria-label="5 estrellas">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} fill="currentColor" />
+              ))}
+            </div>
+            <p className="review-text">“{review.text}”</p>
+            <p className="review-author">{review.author}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export function BervonaStore({ product }: { product: ShopifyProduct }) {
   useCartSync();
@@ -34,6 +100,13 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
   const [selected, setSelected] = useState<ShopifyVariant | undefined>(variants[2] ?? variants[0]);
   const [cartOpen, setCartOpen] = useState(false);
   const { addItem, isLoading, error } = useCartStore();
+  const packsRef = useRef<HTMLElement>(null);
+  const popularVariant = variants.find((v) => v.title.includes("3")) ?? variants[2] ?? variants[0];
+
+  const scrollToPacks = () => {
+    setSelected(popularVariant);
+    scrollToElement(packsRef.current, 90);
+  };
 
   const addSelected = async () => {
     if (!selected) return;
@@ -90,7 +163,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
         </div>
       </section>
 
-      <section id="packs" className="pack-section section-shell">
+      <section id="packs" ref={packsRef} className="pack-section section-shell">
         <div className="pack-intro"><p className="eyebrow">Elige tu pack</p><h2>Una para cada aventura.</h2><p>Los tres packs son variantes reales de tu producto en Shopify.</p></div>
         <div className="pack-grid">
           {bundleCopy.map((pack) => {
@@ -105,9 +178,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
         <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : "Agotado"}</Button><p>Envío calculado en el checkout · Pago seguro con Shopify</p>{error && <p className="text-destructive">{error}</p>}</div>
       </section>
 
-      <section className="social-section section-shell">
-        <div className="social-frame"><Sparkles /><p className="eyebrow">La comunidad empieza contigo</p><h2>Sé el primero en probarla.</h2><p>Aún no hay reseñas. Queremos que las primeras palabras sobre la Bervona Drop sean reales.</p></div>
-      </section>
+      <ReviewsSection />
 
       <section id="faq" className="faq-section section-shell">
         <div><p className="eyebrow">Preguntas frecuentes</p><h2>Todo claro antes de salir.</h2></div>
