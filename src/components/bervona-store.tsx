@@ -41,7 +41,32 @@ const features = [
   { icon: PackageCheck, title: "Siempre a mano", text: "Cordón y mosquetón para correa, mochila o cinturón." },
 ];
 
-function scrollToPacks() { document.querySelector("#packs")?.scrollIntoView({ behavior: "smooth" }); }
+function scrollToElement(el: HTMLElement | null, offset = 80) {
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top, behavior: "smooth" });
+}
+
+function useRevealObserver() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+  return { ref, visible };
+}
 
 export function BervonaStore({ product }: { product: ShopifyProduct }) {
   useCartSync();
@@ -49,6 +74,13 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
   const [selected, setSelected] = useState<ShopifyVariant | undefined>(variants[2] ?? variants[0]);
   const [cartOpen, setCartOpen] = useState(false);
   const { addItem, isLoading, error } = useCartStore();
+  const packsRef = useRef<HTMLElement>(null);
+  const popularVariant = variants.find((v) => v.title.includes("3")) ?? variants[2] ?? variants[0];
+
+  const scrollToPacks = () => {
+    setSelected(popularVariant);
+    scrollToElement(packsRef.current, 90);
+  };
 
   const addSelected = async () => {
     if (!selected) return;
