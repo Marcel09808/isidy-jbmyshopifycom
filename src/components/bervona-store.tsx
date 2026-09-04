@@ -68,6 +68,31 @@ function useRevealObserver() {
   return { ref, visible };
 }
 
+function ReviewsSection() {
+  const { ref, visible } = useRevealObserver();
+  return (
+    <section ref={ref} className={`reviews-section section-shell ${visible ? "is-visible" : ""}`}>
+      <div className="reviews-intro">
+        <p className="eyebrow">Lo que dicen quienes ya lo han probado</p>
+        <span className="reviews-tag">Opiniones sobre el producto</span>
+      </div>
+      <div className="reviews-track">
+        {reviews.map((review) => (
+          <article key={review.author} className="review-card">
+            <div className="review-stars" aria-label="5 estrellas">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} fill="currentColor" />
+              ))}
+            </div>
+            <p className="review-text">“{review.text}”</p>
+            <p className="review-author">{review.author}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function BervonaStore({ product }: { product: ShopifyProduct }) {
   useCartSync();
   const variants = product.node.variants.edges.map((edge) => edge.node);
