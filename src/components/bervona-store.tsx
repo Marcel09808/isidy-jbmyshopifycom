@@ -94,7 +94,7 @@ function ReviewsSection() {
   );
 }
 
-export function BervonaStore({ product }: { product: ShopifyProduct }) {
+export function BervonaStore({ product, unavailable = false }: { product: ShopifyProduct; unavailable?: boolean }) {
   useCartSync();
   const variants = product.node.variants.edges.map((edge) => edge.node);
   const [selected, setSelected] = useState<ShopifyVariant | undefined>(variants[2] ?? variants[0]);
