@@ -123,3 +123,31 @@ export async function removeShopifyCartLine(cartId: string, lineId: string) {
   const errors = data?.cartLinesRemove.userErrors ?? [];
   return { success: errors.length === 0, cartNotFound: cartMissing(errors) };
 }
+const fallbackVariant = (id: string, title: string, amount: string): ShopifyVariant => ({
+  id,
+  title,
+  availableForSale: false,
+  price: { amount, currencyCode: "EUR" },
+  compareAtPrice: null,
+  selectedOptions: [{ name: "Pack", value: title }],
+});
+
+export const FALLBACK_PRODUCT: ShopifyProduct = {
+  node: {
+    id: "fallback",
+    title: "Bervona Drop — Botella de agua para perro con cuenco integrado, paseo y viaje",
+    description:
+      "Botella esférica de acero inoxidable de 285 ml con cuenco de silicona plegable integrado.",
+    handle: STORE_PRODUCT_HANDLE,
+    priceRange: { minVariantPrice: { amount: "21.54", currencyCode: "EUR" } },
+    images: { edges: [] },
+    variants: {
+      edges: [
+        { node: fallbackVariant("fallback-1", "1 unidad", "21.54") },
+        { node: fallbackVariant("fallback-2", "2 unidades", "38.99") },
+        { node: fallbackVariant("fallback-3", "3 unidades", "54.99") },
+      ],
+    },
+    options: [{ name: "Pack", values: ["1 unidad", "2 unidades", "3 unidades"] }],
+  },
+};
