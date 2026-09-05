@@ -176,17 +176,23 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
       </section>
 
       <section id="packs" ref={packsRef} className="pack-section section-shell">
-        <div className="pack-intro"><p className="eyebrow">Elige tu pack</p><h2>Una para cada aventura.</h2><p>Los tres packs son variantes reales de tu producto en Shopify.</p></div>
+        <div className="pack-intro"><p className="eyebrow">Elige tu pack</p><h2>Una para cada aventura.</h2><p>Precios reales de tu tienda: {euros.format(unitPrice)} por unidad.</p></div>
+        {variants.length > 1 && (
+          <div className="mb-8 flex flex-wrap justify-center gap-3">
+            {variants.map((variant) => (
+              <Button key={variant.id} variant={selected?.id === variant.id ? "hero" : "outline"} onClick={() => setSelected(variant)}>{variant.title}</Button>
+            ))}
+          </div>
+        )}
         <div className="pack-grid">
-          {bundleCopy.map((pack) => {
-            const variant = variants.find((entry) => entry.title.includes(pack.match));
-            if (!variant) return null;
-            const active = selected?.id === variant.id;
-            return <button key={pack.units} className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => setSelected(variant)} aria-pressed={active}>
-              {pack.popular && <span className="popular-label">Mejor precio</span>}<span className="radio-dot">{active && <Check />}</span><h3>{pack.units}</h3><strong>{pack.price}</strong><p>{pack.note}</p><small>{pack.match === "1" ? "21,54 €" : pack.match === "2" ? "19,50 € / unidad" : "18,33 € / unidad"}</small>
+          {packs.map((pack) => {
+            const active = quantity === pack.qty;
+            return <button key={pack.units} className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => setQuantity(pack.qty)} aria-pressed={active}>
+              {pack.popular && <span className="popular-label">Mejor precio</span>}<span className="radio-dot">{active && <Check />}</span><h3>{pack.units}</h3><strong>{euros.format(unitPrice * pack.qty)}</strong><p>{pack.note}</p><small>{euros.format(unitPrice)} / unidad</small>
             </button>;
           })}
         </div>
+
         <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : unavailable ? "No disponible ahora" : "Agotado"}</Button><p>Envío gratis · Pago seguro con Shopify</p>{unavailable && <p className="text-destructive">La compra está desactivada temporalmente: el producto no está publicado en la tienda.</p>}{error && <p className="text-destructive">{error}</p>}</div>
       </section>
 
