@@ -65,13 +65,38 @@ export const PRODUCT_QUERY = `
   }
 `;
 
-export const STORE_PRODUCT_HANDLE = "portable-dog-water-bottle-10oz-stainless-steel-travel-bowl";
+export const STORE_PRODUCT_HANDLE =
+  "1pc-outdoor-adventure-pet-water-set-leak-proof-travel-cup-with-built-in-foldable-water-bowl-feeder-suitable-for-cats-and-dogs";
+
+export const FIRST_PRODUCT_QUERY = `
+  query FirstProduct {
+    products(first: 1) {
+      edges {
+        node {
+          id title description handle
+          priceRange { minVariantPrice { amount currencyCode } }
+          images(first: 10) { edges { node { url altText } } }
+          variants(first: 10) {
+            edges { node { id title availableForSale price { amount currencyCode } compareAtPrice { amount currencyCode } selectedOptions { name value } } }
+          }
+          options { name values }
+        }
+      }
+    }
+  }
+`;
 
 export async function getBervonaProduct() {
-  const data = await storefrontApiRequest<{ product: ShopifyProduct["node"] | null }>(PRODUCT_QUERY, {
+  const byHandle = await storefrontApiRequest<{ product: ShopifyProduct["node"] | null }>(PRODUCT_QUERY, {
     handle: STORE_PRODUCT_HANDLE,
   });
-  return data?.product ? ({ node: data.product } satisfies ShopifyProduct) : null;
+  if (byHandle?.product) return { node: byHandle.product } satisfies ShopifyProduct;
+
+  const first = await storefrontApiRequest<{ products: { edges: Array<{ node: ShopifyProduct["node"] }> } }>(
+    FIRST_PRODUCT_QUERY,
+  );
+  const node = first?.products.edges[0]?.node;
+  return node ? ({ node } satisfies ShopifyProduct) : null;
 }
 
 export const CART_QUERY = `query cart($id: ID!) { cart(id: $id) { id totalQuantity } }`;
@@ -129,7 +154,7 @@ const fallbackVariant = (id: string, title: string, amount: string): ShopifyVari
   availableForSale: false,
   price: { amount, currencyCode: "EUR" },
   compareAtPrice: null,
-  selectedOptions: [{ name: "Pack", value: title }],
+  selectedOptions: [{ name: "Color", value: title }],
 });
 
 export const FALLBACK_PRODUCT: ShopifyProduct = {
@@ -139,15 +164,14 @@ export const FALLBACK_PRODUCT: ShopifyProduct = {
     description:
       "Botella esférica de acero inoxidable de 285 ml con cuenco de silicona plegable integrado.",
     handle: STORE_PRODUCT_HANDLE,
-    priceRange: { minVariantPrice: { amount: "21.54", currencyCode: "EUR" } },
+    priceRange: { minVariantPrice: { amount: "19.48", currencyCode: "EUR" } },
     images: { edges: [] },
     variants: {
       edges: [
-        { node: fallbackVariant("fallback-1", "1 unidad", "21.54") },
-        { node: fallbackVariant("fallback-2", "2 unidades", "38.99") },
-        { node: fallbackVariant("fallback-3", "3 unidades", "54.99") },
+        { node: fallbackVariant("fallback-pink", "Pink", "19.48") },
+        { node: fallbackVariant("fallback-blue", "Blue", "19.48") },
       ],
     },
-    options: [{ name: "Pack", values: ["1 unidad", "2 unidades", "3 unidades"] }],
+    options: [{ name: "Color", values: ["Pink", "Blue"] }],
   },
 };

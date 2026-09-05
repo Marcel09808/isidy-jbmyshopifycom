@@ -26,12 +26,6 @@ const reviews = [
   },
 ];
 
-const bundleCopy = [
-  { match: "1", units: "1 unidad", price: "21,54 €", note: "Para tu compañero" },
-  { match: "2", units: "2 unidades", price: "38,99 €", note: "Ahorras 4,09 €" },
-  { match: "3", units: "3 unidades", price: "54,99 €", note: "Mejor precio por unidad", popular: true },
-];
-
 const features = [
   { icon: Droplets, title: "Cuenco instantáneo", text: "Despliega la silicona integrada y sirve al momento." },
   { icon: Utensils, title: "Agua o comida", text: "Un solo accesorio para hidratar o dar un snack." },
@@ -94,25 +88,37 @@ function ReviewsSection() {
   );
 }
 
+const euros = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
+
+const packs = [
+  { qty: 1, units: "1 unidad", note: "Para tu compañero" },
+  { qty: 2, units: "2 unidades", note: "Una para cada paseo" },
+  { qty: 3, units: "3 unidades", note: "Mejor precio por unidad", popular: true },
+];
+
 export function BervonaStore({ product, unavailable = false }: { product: ShopifyProduct; unavailable?: boolean }) {
   useCartSync();
   const variants = product.node.variants.edges.map((edge) => edge.node);
-  const [selected, setSelected] = useState<ShopifyVariant | undefined>(variants[2] ?? variants[0]);
+  const [selected, setSelected] = useState<ShopifyVariant | undefined>(
+    variants.find((v) => /pink|rosa/i.test(v.title)) ?? variants[0],
+  );
+  const [quantity, setQuantity] = useState(3);
   const [cartOpen, setCartOpen] = useState(false);
   const { addItem, isLoading, error } = useCartStore();
   const packsRef = useRef<HTMLElement>(null);
-  const popularVariant = variants.find((v) => v.title.includes("3")) ?? variants[2] ?? variants[0];
+  const unitPrice = Number(selected?.price.amount ?? 0);
 
   const scrollToPacks = () => {
-    setSelected(popularVariant);
+    setQuantity(3);
     scrollToElement(packsRef.current, 90);
   };
 
   const addSelected = async () => {
     if (!selected) return;
-    const added = await addItem({ product, variantId: selected.id, variantTitle: selected.title, price: selected.price, quantity: 1, selectedOptions: selected.selectedOptions });
+    const added = await addItem({ product, variantId: selected.id, variantTitle: selected.title, price: selected.price, quantity, selectedOptions: selected.selectedOptions });
     if (added) setCartOpen(true);
   };
+
 
   return (
     <main className="overflow-hidden">
@@ -131,7 +137,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
           <p>Agua y comida para tu perro en cualquier paseo, dentro de una botella compacta que se convierte en cuenco.</p>
           <div className="flex flex-wrap items-center gap-4">
             <Button variant="hero" size="xl" onClick={scrollToPacks}>Elegir mi pack <ChevronRight /></Button>
-            <span className="text-sm text-muted-foreground">Desde 21,54 €</span>
+            
           </div>
         </div>
         <div className="hero-visual">
@@ -164,17 +170,23 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
       </section>
 
       <section id="packs" ref={packsRef} className="pack-section section-shell">
-        <div className="pack-intro"><p className="eyebrow">Elige tu pack</p><h2>Una para cada aventura.</h2><p>Los tres packs son variantes reales de tu producto en Shopify.</p></div>
+        <div className="pack-intro"><p className="eyebrow">Elige tu pack</p><h2>Una para cada aventura.</h2><p>Precios reales de tu tienda: {euros.format(unitPrice)} por unidad.</p></div>
+        {variants.length > 1 && (
+          <div className="mb-8 flex flex-wrap justify-center gap-3">
+            {variants.map((variant) => (
+              <Button key={variant.id} variant={selected?.id === variant.id ? "hero" : "outline"} onClick={() => setSelected(variant)}>{variant.title}</Button>
+            ))}
+          </div>
+        )}
         <div className="pack-grid">
-          {bundleCopy.map((pack) => {
-            const variant = variants.find((entry) => entry.title.includes(pack.match));
-            if (!variant) return null;
-            const active = selected?.id === variant.id;
-            return <button key={pack.units} className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => setSelected(variant)} aria-pressed={active}>
-              {pack.popular && <span className="popular-label">Mejor precio</span>}<span className="radio-dot">{active && <Check />}</span><h3>{pack.units}</h3><strong>{pack.price}</strong><p>{pack.note}</p><small>{pack.match === "1" ? "21,54 €" : pack.match === "2" ? "19,50 € / unidad" : "18,33 € / unidad"}</small>
+          {packs.map((pack) => {
+            const active = quantity === pack.qty;
+            return <button key={pack.units} className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => setQuantity(pack.qty)} aria-pressed={active}>
+              {pack.popular && <span className="popular-label">Mejor precio</span>}<span className="radio-dot">{active && <Check />}</span><h3>{pack.units}</h3><strong>{euros.format(unitPrice * pack.qty)}</strong><p>{pack.note}</p><small>{euros.format(unitPrice)} / unidad</small>
             </button>;
           })}
         </div>
+
         <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : unavailable ? "No disponible ahora" : "Agotado"}</Button><p>Envío gratis · Pago seguro con Shopify</p>{unavailable && <p className="text-destructive">La compra está desactivada temporalmente: el producto no está publicado en la tienda.</p>}{error && <p className="text-destructive">{error}</p>}</div>
       </section>
 
