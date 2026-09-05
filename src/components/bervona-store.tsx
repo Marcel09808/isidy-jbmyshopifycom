@@ -94,25 +94,37 @@ function ReviewsSection() {
   );
 }
 
+const euros = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
+
+const packs = [
+  { qty: 1, units: "1 unidad", note: "Para tu compañero" },
+  { qty: 2, units: "2 unidades", note: "Una para cada paseo" },
+  { qty: 3, units: "3 unidades", note: "Mejor precio por unidad", popular: true },
+];
+
 export function BervonaStore({ product, unavailable = false }: { product: ShopifyProduct; unavailable?: boolean }) {
   useCartSync();
   const variants = product.node.variants.edges.map((edge) => edge.node);
-  const [selected, setSelected] = useState<ShopifyVariant | undefined>(variants[2] ?? variants[0]);
+  const [selected, setSelected] = useState<ShopifyVariant | undefined>(
+    variants.find((v) => /pink|rosa/i.test(v.title)) ?? variants[0],
+  );
+  const [quantity, setQuantity] = useState(3);
   const [cartOpen, setCartOpen] = useState(false);
   const { addItem, isLoading, error } = useCartStore();
   const packsRef = useRef<HTMLElement>(null);
-  const popularVariant = variants.find((v) => v.title.includes("3")) ?? variants[2] ?? variants[0];
+  const unitPrice = Number(selected?.price.amount ?? 0);
 
   const scrollToPacks = () => {
-    setSelected(popularVariant);
+    setQuantity(3);
     scrollToElement(packsRef.current, 90);
   };
 
   const addSelected = async () => {
     if (!selected) return;
-    const added = await addItem({ product, variantId: selected.id, variantTitle: selected.title, price: selected.price, quantity: 1, selectedOptions: selected.selectedOptions });
+    const added = await addItem({ product, variantId: selected.id, variantTitle: selected.title, price: selected.price, quantity, selectedOptions: selected.selectedOptions });
     if (added) setCartOpen(true);
   };
+
 
   return (
     <main className="overflow-hidden">
