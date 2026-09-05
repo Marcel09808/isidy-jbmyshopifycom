@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowDown, Check, ChevronRight, CircleOff, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, Sparkles, Utensils, WashingMachine } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -24,27 +24,6 @@ function scrollToElement(el: HTMLElement | null, offset = 80) {
   if (!el) return;
   const top = el.getBoundingClientRect().top + window.scrollY - offset;
   window.scrollTo({ top, behavior: "smooth" });
-}
-
-function useRevealObserver() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-  return { ref, visible };
 }
 
 const euros = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
