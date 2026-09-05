@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { BervonaStore } from "@/components/bervona-store";
-import { getBervonaProduct } from "@/lib/shopify";
+import { FALLBACK_PRODUCT, getBervonaProduct } from "@/lib/shopify";
 
 const productQuery = queryOptions({
   queryKey: ["bervona-product"],
