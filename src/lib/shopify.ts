@@ -154,7 +154,7 @@ const fallbackVariant = (id: string, title: string, amount: string): ShopifyVari
   availableForSale: false,
   price: { amount, currencyCode: "EUR" },
   compareAtPrice: null,
-  selectedOptions: [{ name: "Pack", value: title }],
+  selectedOptions: [{ name: "Color", value: title }],
 });
 
 export const FALLBACK_PRODUCT: ShopifyProduct = {
@@ -164,15 +164,14 @@ export const FALLBACK_PRODUCT: ShopifyProduct = {
     description:
       "Botella esférica de acero inoxidable de 285 ml con cuenco de silicona plegable integrado.",
     handle: STORE_PRODUCT_HANDLE,
-    priceRange: { minVariantPrice: { amount: "21.54", currencyCode: "EUR" } },
+    priceRange: { minVariantPrice: { amount: "19.48", currencyCode: "EUR" } },
     images: { edges: [] },
     variants: {
       edges: [
-        { node: fallbackVariant("fallback-1", "1 unidad", "21.54") },
-        { node: fallbackVariant("fallback-2", "2 unidades", "38.99") },
-        { node: fallbackVariant("fallback-3", "3 unidades", "54.99") },
+        { node: fallbackVariant("fallback-pink", "Pink", "19.48") },
+        { node: fallbackVariant("fallback-blue", "Blue", "19.48") },
       ],
     },
-    options: [{ name: "Pack", values: ["1 unidad", "2 unidades", "3 unidades"] }],
+    options: [{ name: "Color", values: ["Pink", "Blue"] }],
   },
 };

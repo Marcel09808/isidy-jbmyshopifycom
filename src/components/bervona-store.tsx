@@ -26,12 +26,6 @@ const reviews = [
   },
 ];
 
-const bundleCopy = [
-  { match: "1", units: "1 unidad", price: "21,54 €", note: "Para tu compañero" },
-  { match: "2", units: "2 unidades", price: "38,99 €", note: "Ahorras 4,09 €" },
-  { match: "3", units: "3 unidades", price: "54,99 €", note: "Mejor precio por unidad", popular: true },
-];
-
 const features = [
   { icon: Droplets, title: "Cuenco instantáneo", text: "Despliega la silicona integrada y sirve al momento." },
   { icon: Utensils, title: "Agua o comida", text: "Un solo accesorio para hidratar o dar un snack." },
@@ -143,7 +137,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
           <p>Agua y comida para tu perro en cualquier paseo, dentro de una botella compacta que se convierte en cuenco.</p>
           <div className="flex flex-wrap items-center gap-4">
             <Button variant="hero" size="xl" onClick={scrollToPacks}>Elegir mi pack <ChevronRight /></Button>
-            <span className="text-sm text-muted-foreground">Desde 21,54 €</span>
+            
           </div>
         </div>
         <div className="hero-visual">
