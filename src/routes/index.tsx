@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { BervonaStore } from "@/components/bervona-store";
-import { getBervonaProduct } from "@/lib/shopify";
+import { FALLBACK_PRODUCT, getBervonaProduct } from "@/lib/shopify";
 
 const productQuery = queryOptions({
   queryKey: ["bervona-product"],
@@ -32,13 +32,5 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { data: product } = useSuspenseQuery(productQuery);
 
-  if (!product) {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-6 text-center text-muted-foreground">
-        No hemos podido cargar el producto ahora mismo. Vuelve a intentarlo en unos segundos.
-      </div>
-    );
-  }
-
-  return <BervonaStore product={product} />;
+  return <BervonaStore product={product ?? FALLBACK_PRODUCT} unavailable={!product} />;
 }

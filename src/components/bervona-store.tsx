@@ -94,7 +94,7 @@ function ReviewsSection() {
   );
 }
 
-export function BervonaStore({ product }: { product: ShopifyProduct }) {
+export function BervonaStore({ product, unavailable = false }: { product: ShopifyProduct; unavailable?: boolean }) {
   useCartSync();
   const variants = product.node.variants.edges.map((edge) => edge.node);
   const [selected, setSelected] = useState<ShopifyVariant | undefined>(variants[2] ?? variants[0]);
@@ -175,7 +175,7 @@ export function BervonaStore({ product }: { product: ShopifyProduct }) {
             </button>;
           })}
         </div>
-        <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : "Agotado"}</Button><p>Envío gratis · Pago seguro con Shopify</p>{error && <p className="text-destructive">{error}</p>}</div>
+        <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : unavailable ? "No disponible ahora" : "Agotado"}</Button><p>Envío gratis · Pago seguro con Shopify</p>{unavailable && <p className="text-destructive">La compra está desactivada temporalmente: el producto no está publicado en la tienda.</p>}{error && <p className="text-destructive">{error}</p>}</div>
       </section>
 
       <ReviewsSection />
