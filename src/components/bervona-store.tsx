@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ArrowDown, Check, ChevronRight, CircleOff, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, Sparkles, Utensils, WashingMachine } from "lucide-react";
+import { ArrowDown, Check, ChevronRight, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, ShieldCheck, Sparkles, Truck, Utensils, WashingMachine } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { useCartStore } from "@/stores/cart-store";
 import type { ShopifyProduct, ShopifyVariant } from "@/lib/shopify";
 import heroImage from "@/assets/bervona-hero.jpg";
 import lifestyleImage from "@/assets/bervona-lifestyle.jpg";
+import pinkImage from "@/assets/drop-pink.jpg";
+import blueImage from "@/assets/drop-blue.jpg";
 
 const features = [
   { icon: Droplets, title: "Cuenco instantáneo", text: "Despliega la silicona integrada y sirve al momento." },
@@ -18,6 +20,11 @@ const features = [
   { icon: Feather, title: "Solo 186 g", text: "Ligera para ti, capacidad suficiente para su paseo." },
   { icon: WashingMachine, title: "Lavavajillas", text: "Limpieza sencilla después de cada aventura." },
   { icon: PackageCheck, title: "Siempre a mano", text: "Cordón y mosquetón para correa, mochila o cinturón." },
+];
+
+const colors = [
+  { label: "Rosa", match: /pink|rosa/i, image: pinkImage, dot: "#f2a3bd" },
+  { label: "Azul", match: /blue|azul|turq/i, image: blueImage, dot: "#37c6cd" },
 ];
 
 function scrollToElement(el: HTMLElement | null, offset = 80) {
@@ -29,22 +36,28 @@ function scrollToElement(el: HTMLElement | null, offset = 80) {
 const euros = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
 
 const packs = [
-  { qty: 1, units: "1 unidad", note: "Para tu compañero" },
-  { qty: 2, units: "2 unidades", note: "Una para cada paseo" },
-  { qty: 3, units: "3 unidades", note: "Mejor precio por unidad", popular: true },
+  { qty: 1, units: "1 unidad", price: 23.57, compareAt: 34.99, note: "Para tu compañero" },
+  { qty: 2, units: "2 unidades", price: 42.99, compareAt: 69.98, note: "Una para cada paseo" },
+  { qty: 3, units: "3 unidades", price: 57.99, compareAt: 104.97, note: "Mejor precio por unidad", popular: true },
 ];
 
 export function BervonaStore({ product, unavailable = false }: { product: ShopifyProduct; unavailable?: boolean }) {
   useCartSync();
   const variants = product.node.variants.edges.map((edge) => edge.node);
+  const findVariant = (match: RegExp) => variants.find((v) => match.test(v.title));
+  const [colorIndex, setColorIndex] = useState(0);
   const [selected, setSelected] = useState<ShopifyVariant | undefined>(
-    variants.find((v) => /pink|rosa/i.test(v.title)) ?? variants[0],
+    findVariant(colors[0].match) ?? variants[0],
   );
   const [quantity, setQuantity] = useState(3);
   const [cartOpen, setCartOpen] = useState(false);
   const { addItem, isLoading, error } = useCartStore();
   const packsRef = useRef<HTMLElement>(null);
-  const unitPrice = Number(selected?.price.amount ?? 0);
+
+  const selectColor = (index: number) => {
+    setColorIndex(index);
+    setSelected(findVariant(colors[index].match) ?? variants[index] ?? variants[0]);
+  };
 
   const scrollToPacks = () => {
     setQuantity(3);
@@ -56,6 +69,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
     const added = await addItem({ product, variantId: selected.id, variantTitle: selected.title, price: selected.price, quantity, selectedOptions: selected.selectedOptions });
     if (added) setCartOpen(true);
   };
+
 
 
   return (
