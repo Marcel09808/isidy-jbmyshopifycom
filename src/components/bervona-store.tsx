@@ -108,25 +108,51 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
       </section>
 
       <section id="packs" ref={packsRef} className="pack-section section-shell">
-        <div className="pack-intro"><p className="eyebrow">Elige tu pack</p><h2>Una para cada aventura.</h2><p>Precios reales de tu tienda: {euros.format(unitPrice)} por unidad.</p></div>
-        {variants.length > 1 && (
-          <div className="mb-8 flex flex-wrap justify-center gap-3">
-            {variants.map((variant) => (
-              <Button key={variant.id} variant={selected?.id === variant.id ? "hero" : "outline"} onClick={() => setSelected(variant)}>{variant.title}</Button>
-            ))}
-          </div>
-        )}
-        <div className="pack-grid">
-          {packs.map((pack) => {
-            const active = quantity === pack.qty;
-            return <button key={pack.units} className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => setQuantity(pack.qty)} aria-pressed={active}>
-              {pack.popular && <span className="popular-label">Mejor precio</span>}<span className="radio-dot">{active && <Check />}</span><h3>{pack.units}</h3><strong>{euros.format(unitPrice * pack.qty)}</strong><p>{pack.note}</p><small>{euros.format(unitPrice)} / unidad</small>
-            </button>;
-          })}
-        </div>
+        <div className="pack-intro"><p className="eyebrow">Elige tu Drop</p><h2>Color y pack.</h2><p>Elige el color de tu Bervona Drop y cuántas quieres llevarte.</p></div>
 
-        <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : unavailable ? "No disponible ahora" : "Agotado"}</Button><p>Envío gratis · Pago seguro con Shopify</p>{unavailable && <p className="text-destructive">La compra está desactivada temporalmente: el producto no está publicado en la tienda.</p>}{error && <p className="text-destructive">{error}</p>}</div>
+        <div className="buy-layout">
+          <div className="buy-gallery">
+            <img src={colors[colorIndex].image} alt={`Bervona Drop en color ${colors[colorIndex].label.toLowerCase()}`} width={1024} height={1024} loading="lazy" />
+            <div className="swatch-row">
+              {colors.map((color, i) => (
+                <button key={color.label} type="button" className={`swatch ${i === colorIndex ? "is-active" : ""}`} aria-pressed={i === colorIndex} onClick={() => selectColor(i)}>
+                  <img src={color.image} alt="" width={1024} height={1024} loading="lazy" />
+                  <span><i style={{ background: color.dot }} />{color.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="buy-panel">
+            <div className="pack-grid">
+              {packs.map((pack) => {
+                const active = quantity === pack.qty;
+                return <button key={pack.units} type="button" className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => setQuantity(pack.qty)} aria-pressed={active}>
+                  {pack.popular && <span className="popular-label">Mejor precio</span>}
+                  <span className="radio-dot">{active && <Check />}</span>
+                  <h3>{pack.units}</h3>
+                  <strong>{euros.format(pack.price)} <s>{euros.format(pack.compareAt)}</s></strong>
+                  <p>{pack.note}</p>
+                  <small>{euros.format(pack.price / pack.qty)} / unidad</small>
+                </button>;
+              })}
+            </div>
+
+            <div className="pack-action">
+              <Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : unavailable ? "No disponible ahora" : "Agotado"}</Button>
+              {unavailable && <p className="text-destructive">La compra está desactivada temporalmente: el producto no está publicado en la tienda.</p>}
+              {error && <p className="text-destructive">{error}</p>}
+            </div>
+
+            <ul className="buy-perks">
+              {[{ icon: Truck, t: "Envío gratis", d: "En todos los pedidos a España." }, { icon: ShieldCheck, t: "Pago seguro", d: "Checkout protegido con Shopify." }, { icon: RotateCcw, t: "30 días", d: "Devolución sencilla si no encaja." }, { icon: Sparkles, t: "285 ml · 186 g", d: "Acero inoxidable, sin BPA." }].map(({ icon: Icon, t, d }) => (
+                <li key={t}><Icon /><div><strong>{t}</strong><span>{d}</span></div></li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </section>
+
 
       <section id="faq" className="faq-section section-shell">
         <div><p className="eyebrow">Preguntas frecuentes</p><h2>Todo claro antes de salir.</h2></div>
