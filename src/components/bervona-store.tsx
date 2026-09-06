@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ArrowDown, Check, ChevronRight, CircleOff, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, Sparkles, Utensils, WashingMachine } from "lucide-react";
+import { ArrowDown, Check, ChevronRight, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, ShieldCheck, Sparkles, Truck, Utensils, WashingMachine } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { useCartStore } from "@/stores/cart-store";
 import type { ShopifyProduct, ShopifyVariant } from "@/lib/shopify";
 import heroImage from "@/assets/bervona-hero.jpg";
 import lifestyleImage from "@/assets/bervona-lifestyle.jpg";
+import pinkImage from "@/assets/drop-pink.jpg";
+import blueImage from "@/assets/drop-blue.jpg";
 
 const features = [
   { icon: Droplets, title: "Cuenco instantáneo", text: "Despliega la silicona integrada y sirve al momento." },
@@ -18,6 +20,11 @@ const features = [
   { icon: Feather, title: "Solo 186 g", text: "Ligera para ti, capacidad suficiente para su paseo." },
   { icon: WashingMachine, title: "Lavavajillas", text: "Limpieza sencilla después de cada aventura." },
   { icon: PackageCheck, title: "Siempre a mano", text: "Cordón y mosquetón para correa, mochila o cinturón." },
+];
+
+const colors = [
+  { label: "Rosa", match: /pink|rosa/i, image: pinkImage, dot: "#f2a3bd" },
+  { label: "Azul", match: /blue|azul|turq/i, image: blueImage, dot: "#37c6cd" },
 ];
 
 function scrollToElement(el: HTMLElement | null, offset = 80) {
@@ -29,24 +36,33 @@ function scrollToElement(el: HTMLElement | null, offset = 80) {
 const euros = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
 
 const packs = [
-  { qty: 1, units: "1 unidad", note: "Para tu compañero" },
-  { qty: 2, units: "2 unidades", note: "Una para cada paseo" },
-  { qty: 3, units: "3 unidades", note: "Mejor precio por unidad", popular: true },
+  { qty: 1, units: "1 unidad", price: 23.57, compareAt: 34.99, note: "Para tu compañero" },
+  { qty: 2, units: "2 unidades", price: 42.99, compareAt: 69.98, note: "Una para cada paseo" },
+  { qty: 3, units: "3 unidades", price: 57.99, compareAt: 104.97, note: "Mejor precio por unidad", popular: true },
 ];
 
 export function BervonaStore({ product, unavailable = false }: { product: ShopifyProduct; unavailable?: boolean }) {
   useCartSync();
   const variants = product.node.variants.edges.map((edge) => edge.node);
+  const findVariant = (match: RegExp) => variants.find((v) => match.test(v.title));
+  const [colorIndex, setColorIndex] = useState(0);
   const [selected, setSelected] = useState<ShopifyVariant | undefined>(
-    variants.find((v) => /pink|rosa/i.test(v.title)) ?? variants[0],
+    findVariant(colors[0]!.match) ?? variants[0],
   );
   const [quantity, setQuantity] = useState(3);
   const [cartOpen, setCartOpen] = useState(false);
   const { addItem, isLoading, error } = useCartStore();
   const packsRef = useRef<HTMLElement>(null);
-  const unitPrice = Number(selected?.price.amount ?? 0);
+
+  const selectColor = (index: number) => {
+    setColorIndex(index);
+    setSelected(findVariant(colors[index]!.match) ?? variants[index] ?? variants[0]);
+  };
+
+  const activeColor = colors[colorIndex] ?? colors[0]!;
 
   const scrollToPacks = () => {
+
     setQuantity(3);
     scrollToElement(packsRef.current, 90);
   };
@@ -56,6 +72,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
     const added = await addItem({ product, variantId: selected.id, variantTitle: selected.title, price: selected.price, quantity, selectedOptions: selected.selectedOptions });
     if (added) setCartOpen(true);
   };
+
 
 
   return (
@@ -108,25 +125,51 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
       </section>
 
       <section id="packs" ref={packsRef} className="pack-section section-shell">
-        <div className="pack-intro"><p className="eyebrow">Elige tu pack</p><h2>Una para cada aventura.</h2><p>Precios reales de tu tienda: {euros.format(unitPrice)} por unidad.</p></div>
-        {variants.length > 1 && (
-          <div className="mb-8 flex flex-wrap justify-center gap-3">
-            {variants.map((variant) => (
-              <Button key={variant.id} variant={selected?.id === variant.id ? "hero" : "outline"} onClick={() => setSelected(variant)}>{variant.title}</Button>
-            ))}
-          </div>
-        )}
-        <div className="pack-grid">
-          {packs.map((pack) => {
-            const active = quantity === pack.qty;
-            return <button key={pack.units} className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => setQuantity(pack.qty)} aria-pressed={active}>
-              {pack.popular && <span className="popular-label">Mejor precio</span>}<span className="radio-dot">{active && <Check />}</span><h3>{pack.units}</h3><strong>{euros.format(unitPrice * pack.qty)}</strong><p>{pack.note}</p><small>{euros.format(unitPrice)} / unidad</small>
-            </button>;
-          })}
-        </div>
+        <div className="pack-intro"><p className="eyebrow">Elige tu Drop</p><h2>Color y pack.</h2><p>Elige el color de tu Bervona Drop y cuántas quieres llevarte.</p></div>
 
-        <div className="pack-action"><Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : unavailable ? "No disponible ahora" : "Agotado"}</Button><p>Envío gratis · Pago seguro con Shopify</p>{unavailable && <p className="text-destructive">La compra está desactivada temporalmente: el producto no está publicado en la tienda.</p>}{error && <p className="text-destructive">{error}</p>}</div>
+        <div className="buy-layout">
+          <div className="buy-gallery">
+            <img src={activeColor.image} alt={`Bervona Drop en color ${activeColor.label.toLowerCase()}`} width={1024} height={1024} loading="lazy" />
+            <div className="swatch-row">
+              {colors.map((color, i) => (
+                <button key={color.label} type="button" className={`swatch ${i === colorIndex ? "is-active" : ""}`} aria-pressed={i === colorIndex} onClick={() => selectColor(i)}>
+                  <img src={color.image} alt="" width={1024} height={1024} loading="lazy" />
+                  <span><i style={{ background: color.dot }} />{color.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="buy-panel">
+            <div className="pack-grid">
+              {packs.map((pack) => {
+                const active = quantity === pack.qty;
+                return <button key={pack.units} type="button" className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => setQuantity(pack.qty)} aria-pressed={active}>
+                  {pack.popular && <span className="popular-label">Mejor precio</span>}
+                  <span className="radio-dot">{active && <Check />}</span>
+                  <h3>{pack.units}</h3>
+                  <strong>{euros.format(pack.price)} <s>{euros.format(pack.compareAt)}</s></strong>
+                  <p>{pack.note}</p>
+                  <small>{euros.format(pack.price / pack.qty)} / unidad</small>
+                </button>;
+              })}
+            </div>
+
+            <div className="pack-action">
+              <Button variant="hero" size="xl" disabled={isLoading || !selected?.availableForSale} onClick={() => void addSelected()}>{isLoading ? <Loader2 className="animate-spin" /> : <PackageCheck />} {selected?.availableForSale ? "Añadir al carrito" : unavailable ? "No disponible ahora" : "Agotado"}</Button>
+              {unavailable && <p className="text-destructive">La compra está desactivada temporalmente: el producto no está publicado en la tienda.</p>}
+              {error && <p className="text-destructive">{error}</p>}
+            </div>
+
+            <ul className="buy-perks">
+              {[{ icon: Truck, t: "Envío gratis", d: "En todos los pedidos a España." }, { icon: ShieldCheck, t: "Pago seguro", d: "Checkout protegido con Shopify." }, { icon: RotateCcw, t: "30 días", d: "Devolución sencilla si no encaja." }, { icon: Sparkles, t: "285 ml · 186 g", d: "Acero inoxidable, sin BPA." }].map(({ icon: Icon, t, d }) => (
+                <li key={t}><Icon /><div><strong>{t}</strong><span>{d}</span></div></li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </section>
+
 
       <section id="faq" className="faq-section section-shell">
         <div><p className="eyebrow">Preguntas frecuentes</p><h2>Todo claro antes de salir.</h2></div>
