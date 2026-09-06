@@ -126,7 +126,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
 
         <div className="buy-layout">
           <div className="buy-gallery">
-            <img src={colors[colorIndex].image} alt={`Bervona Drop en color ${colors[colorIndex].label.toLowerCase()}`} width={1024} height={1024} loading="lazy" />
+            <img src={activeColor.image} alt={`Bervona Drop en color ${activeColor.label.toLowerCase()}`} width={1024} height={1024} loading="lazy" />
             <div className="swatch-row">
               {colors.map((color, i) => (
                 <button key={color.label} type="button" className={`swatch ${i === colorIndex ? "is-active" : ""}`} aria-pressed={i === colorIndex} onClick={() => selectColor(i)}>
