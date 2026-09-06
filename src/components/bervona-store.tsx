@@ -47,7 +47,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
   const findVariant = (match: RegExp) => variants.find((v) => match.test(v.title));
   const [colorIndex, setColorIndex] = useState(0);
   const [selected, setSelected] = useState<ShopifyVariant | undefined>(
-    findVariant(colors[0].match) ?? variants[0],
+    findVariant(colors[0]!.match) ?? variants[0],
   );
   const [quantity, setQuantity] = useState(3);
   const [cartOpen, setCartOpen] = useState(false);
@@ -56,7 +56,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
 
   const selectColor = (index: number) => {
     setColorIndex(index);
-    setSelected(findVariant(colors[index].match) ?? variants[index] ?? variants[0]);
+    setSelected(findVariant(colors[index]!.match) ?? variants[index] ?? variants[0]);
   };
 
   const scrollToPacks = () => {
