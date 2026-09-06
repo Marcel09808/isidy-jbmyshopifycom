@@ -59,7 +59,10 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
     setSelected(findVariant(colors[index]!.match) ?? variants[index] ?? variants[0]);
   };
 
+  const activeColor = colors[colorIndex] ?? colors[0]!;
+
   const scrollToPacks = () => {
+
     setQuantity(3);
     scrollToElement(packsRef.current, 90);
   };
