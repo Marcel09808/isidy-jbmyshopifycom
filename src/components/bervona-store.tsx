@@ -11,7 +11,7 @@ import type { ShopifyProduct, ShopifyVariant } from "@/lib/shopify";
 import heroImage from "@/assets/bervona-hero.jpg";
 import lifestyleImage from "@/assets/bervona-lifestyle.jpg";
 import pink1 from "@/assets/drop-pink-1.jpg";
-import pink2 from "@/assets/drop-pink-2.jpg";
+
 import pink3 from "@/assets/drop-pink-3.jpg";
 import pink4 from "@/assets/drop-pink-4.jpg";
 import blue1 from "@/assets/drop-blue-1.jpg";
