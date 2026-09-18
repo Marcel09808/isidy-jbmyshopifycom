@@ -15,7 +15,7 @@ import pink2 from "@/assets/drop-pink-2.jpg";
 import pink3 from "@/assets/drop-pink-3.jpg";
 import pink4 from "@/assets/drop-pink-4.jpg";
 import blue1 from "@/assets/drop-blue-1.jpg";
-import blue2 from "@/assets/drop-blue-2.jpg";
+
 import blue3 from "@/assets/drop-blue-3.jpg";
 import blue4 from "@/assets/drop-blue-4.jpg";
 
