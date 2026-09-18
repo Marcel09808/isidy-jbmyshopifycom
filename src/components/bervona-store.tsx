@@ -30,7 +30,7 @@ const features = [
 
 const colors = [
   { label: "Rosa", match: /pink|rosa/i, gallery: [pink1, pink3, pink4], dot: "#f2a3bd", note: "Silicona rosa" },
-  { label: "Azul", match: /blue|azul|turq/i, gallery: [blue1, blue2, blue3, blue4], dot: "#37c6cd", note: "Silicona turquesa" },
+  { label: "Azul", match: /blue|azul|turq/i, gallery: [blue1, blue3, blue4], dot: "#37c6cd", note: "Silicona turquesa" },
 ];
 
 const tickerItems = ["285 ml", "186 g", "Acero inoxidable", "Sin BPA", "Cuenco integrado", "Antigoteo", "Apta lavavajillas", "Envío gratis"];
