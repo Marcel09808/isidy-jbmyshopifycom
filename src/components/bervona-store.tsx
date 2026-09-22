@@ -292,6 +292,12 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
             rel="noopener noreferrer"
             className="footer-social-item transition-colors hover:text-foreground"
             title="Instagram"
+            onClick={(e) => {
+              if (window.self !== window.top) {
+                e.preventDefault();
+                window.open("https://www.instagram.com/bervona_/", "_blank", "noopener,noreferrer");
+              }
+            }}
           >
             <InstagramIcon className="size-4 shrink-0" />
             <span>Instagram: <strong className="font-medium text-foreground">bervona_</strong></span>
@@ -303,6 +309,12 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
             rel="noopener noreferrer"
             className="footer-social-item transition-colors hover:text-foreground"
             title="TikTok"
+            onClick={(e) => {
+              if (window.self !== window.top) {
+                e.preventDefault();
+                window.open("https://www.tiktok.com/@bervona.com", "_blank", "noopener,noreferrer");
+              }
+            }}
           >
             <TikTokIcon className="size-4 shrink-0" />
             <span>TikTok: <strong className="font-medium text-foreground">BERVONA</strong></span>
