@@ -4,8 +4,10 @@ import {
   CART_QUERY,
   addShopifyCartLine,
   createShopifyCart,
+  formatCheckoutUrl,
   removeShopifyCartLine,
   storefrontApiRequest,
+  updateShopifyCartDiscount,
   updateShopifyCartLine,
   type ShopifyProduct,
 } from "@/lib/shopify";
@@ -18,6 +20,12 @@ export interface CartItem {
   price: { amount: string; currencyCode: string };
   quantity: number;
   selectedOptions: Array<{ name: string; value: string }>;
+}
+
+export function getDiscountCodeForQuantity(quantity: number): string | null {
+  if (quantity === 2) return "PACK2";
+  if (quantity >= 3) return "PACK3";
+  return null;
 }
 
 interface CartState {
@@ -44,19 +52,36 @@ export const useCartStore = create<CartState>()(
         try {
           const state = get();
           const existing = state.items.find((entry) => entry.variantId === item.variantId);
+          const totalQty = (existing ? existing.quantity : 0) + item.quantity;
+          const discountCode = getDiscountCodeForQuantity(totalQty);
+
           if (!state.cartId) {
-            const result = await createShopifyCart(item.variantId, item.quantity);
+            const result = await createShopifyCart(item.variantId, item.quantity, discountCode);
             if (!result) throw new Error("No se pudo crear el carrito.");
             set({ cartId: result.cartId, checkoutUrl: result.checkoutUrl, items: [{ ...item, lineId: result.lineId }] });
           } else if (existing?.lineId) {
             const quantity = existing.quantity + item.quantity;
             const result = await updateShopifyCartLine(state.cartId, existing.lineId, quantity);
-            if (result.cartNotFound) get().clearCart();
-            else if (result.success) set({ items: get().items.map((entry) => entry.variantId === item.variantId ? { ...entry, quantity } : entry) });
+            if (result.cartNotFound) {
+              get().clearCart();
+            } else if (result.success) {
+              const updatedCheckout = await updateShopifyCartDiscount(state.cartId, discountCode);
+              set({
+                checkoutUrl: updatedCheckout ?? (discountCode && state.checkoutUrl ? formatCheckoutUrl(state.checkoutUrl, discountCode) : state.checkoutUrl),
+                items: get().items.map((entry) => entry.variantId === item.variantId ? { ...entry, quantity } : entry),
+              });
+            }
           } else {
             const result = await addShopifyCartLine(state.cartId, item.variantId, item.quantity);
-            if (result.cartNotFound) get().clearCart();
-            else if (result.success) set({ items: [...get().items, { ...item, lineId: result.lineId ?? null }] });
+            if (result.cartNotFound) {
+              get().clearCart();
+            } else if (result.success) {
+              const updatedCheckout = await updateShopifyCartDiscount(state.cartId, discountCode);
+              set({
+                checkoutUrl: updatedCheckout ?? (discountCode && state.checkoutUrl ? formatCheckoutUrl(state.checkoutUrl, discountCode) : state.checkoutUrl),
+                items: [...get().items, { ...item, lineId: result.lineId ?? null }],
+              });
+            }
           }
           return true;
         } catch (error) {
@@ -72,8 +97,18 @@ export const useCartStore = create<CartState>()(
         set({ isLoading: true });
         try {
           const result = await updateShopifyCartLine(state.cartId, item.lineId, quantity);
-          if (result.cartNotFound) get().clearCart();
-          else if (result.success) set({ items: get().items.map((entry) => entry.variantId === variantId ? { ...entry, quantity } : entry) });
+          if (result.cartNotFound) {
+            get().clearCart();
+          } else if (result.success) {
+            const updatedItems = get().items.map((entry) => entry.variantId === variantId ? { ...entry, quantity } : entry);
+            const totalQty = updatedItems.reduce((sum, entry) => sum + entry.quantity, 0);
+            const discountCode = getDiscountCodeForQuantity(totalQty);
+            const updatedCheckout = await updateShopifyCartDiscount(state.cartId, discountCode);
+            set({
+              checkoutUrl: updatedCheckout ?? (state.checkoutUrl ? formatCheckoutUrl(state.checkoutUrl, discountCode) : state.checkoutUrl),
+              items: updatedItems,
+            });
+          }
         } finally { set({ isLoading: false }); }
       },
       removeItem: async (variantId) => {
@@ -86,7 +121,17 @@ export const useCartStore = create<CartState>()(
           if (result.cartNotFound) get().clearCart();
           else if (result.success) {
             const items = get().items.filter((entry) => entry.variantId !== variantId);
-            items.length ? set({ items }) : get().clearCart();
+            if (items.length) {
+              const totalQty = items.reduce((sum, entry) => sum + entry.quantity, 0);
+              const discountCode = getDiscountCodeForQuantity(totalQty);
+              const updatedCheckout = await updateShopifyCartDiscount(state.cartId, discountCode);
+              set({
+                checkoutUrl: updatedCheckout ?? (state.checkoutUrl ? formatCheckoutUrl(state.checkoutUrl, discountCode) : state.checkoutUrl),
+                items,
+              });
+            } else {
+              get().clearCart();
+            }
           }
         } finally { set({ isLoading: false }); }
       },

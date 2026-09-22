@@ -62,17 +62,28 @@ function useReveal() {
 
 const euros = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
 
-const packs = [
-  { qty: 1, units: "1 unidad", price: 23.57, compareAt: 34.99, note: "Para tu compañero" },
-  { qty: 2, units: "2 unidades", price: 42.99, compareAt: 69.98, note: "Una para cada paseo" },
-  { qty: 3, units: "3 unidades", price: 57.99, compareAt: 104.97, note: "Mejor precio por unidad", popular: true },
+export const packs = [
+  { qty: 1, units: "1 unidad", price: 17.99, compareAt: 24.99, note: "Para tu compañero", discountCode: null },
+  { qty: 2, units: "2 unidades", price: 31.99, compareAt: 35.98, note: "Una para cada paseo", discountCode: "PACK2" },
+  { qty: 3, units: "3 unidades", price: 44.99, compareAt: 53.97, note: "Mejor precio por unidad", popular: true, discountCode: "PACK3" },
 ];
 
 export function BervonaStore({ product, unavailable = false }: { product: ShopifyProduct; unavailable?: boolean }) {
   useCartSync();
   useReveal();
   const variants = product.node.variants.edges.map((edge) => edge.node);
-  const findVariant = (match: RegExp) => variants.find((v) => match.test(v.title));
+  const findVariant = (match: RegExp, qty = 1) => {
+    if (qty > 1) {
+      const packMatch = variants.find(
+        (v) =>
+          match.test(v.title) &&
+          (new RegExp(`pack\\s*${qty}|${qty}\\s*unidades|${qty}\\s*uds|x${qty}`, "i").test(v.title) ||
+            v.selectedOptions?.some((opt) => new RegExp(`pack\\s*${qty}|${qty}`, "i").test(opt.value))),
+      );
+      if (packMatch) return packMatch;
+    }
+    return variants.find((v) => match.test(v.title));
+  };
   const [colorIndex, setColorIndex] = useState(0);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [selected, setSelected] = useState<ShopifyVariant | undefined>(
@@ -86,7 +97,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
   const selectColor = (index: number) => {
     setColorIndex(index);
     setPhotoIndex(0);
-    setSelected(findVariant(colors[index]!.match) ?? variants[index] ?? variants[0]);
+    setSelected(findVariant(colors[index]!.match, quantity) ?? variants[index] ?? variants[0]);
   };
 
   const activeColor = colors[colorIndex] ?? colors[0]!;
@@ -99,7 +110,31 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
 
   const addSelected = async () => {
     if (!selected) return;
-    const added = await addItem({ product, variantId: selected.id, variantTitle: selected.title, price: selected.price, quantity, selectedOptions: selected.selectedOptions });
+    const pack = packs.find((p) => p.qty === quantity) ?? packs[0];
+    const packVariant = findVariant(colors[colorIndex]!.match, quantity);
+
+    if (packVariant && packVariant.id !== selected.id) {
+      const added = await addItem({
+        product,
+        variantId: packVariant.id,
+        variantTitle: packVariant.title,
+        price: packVariant.price,
+        quantity: 1,
+        selectedOptions: packVariant.selectedOptions,
+      });
+      if (added) setCartOpen(true);
+      return;
+    }
+
+    const unitPrice = (pack.price / pack.qty).toFixed(2);
+    const added = await addItem({
+      product,
+      variantId: selected.id,
+      variantTitle: `${selected.title} (${pack.units})`,
+      price: { amount: unitPrice, currencyCode: selected.price?.currencyCode ?? "EUR" },
+      quantity: pack.qty,
+      selectedOptions: selected.selectedOptions,
+    });
     if (added) setCartOpen(true);
   };
 
@@ -191,7 +226,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
             <div className="pack-grid">
               {packs.map((pack) => {
                 const active = quantity === pack.qty;
-                return <button key={pack.units} type="button" className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => setQuantity(pack.qty)} aria-pressed={active}>
+                return <button key={pack.units} type="button" className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => { setQuantity(pack.qty); setSelected(findVariant(colors[colorIndex]!.match, pack.qty) ?? selected); }} aria-pressed={active}>
                   {pack.popular && <span className="popular-label">Mejor precio</span>}
                   <span className="radio-dot">{active && <Check />}</span>
                   <h3>{pack.units}</h3>

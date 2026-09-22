@@ -66,7 +66,7 @@ export const PRODUCT_QUERY = `
 `;
 
 export const STORE_PRODUCT_HANDLE =
-  "1pc-outdoor-adventure-pet-water-set-leak-proof-travel-cup-with-built-in-foldable-water-bowl-feeder-suitable-for-cats-and-dogs";
+  "2-in-1-portable-dog-water-bottle-for-small-dogs-leak-proof-compact-dog-travel-water-bottle-stainless-steel-bottle-silicon";
 
 export const FIRST_PRODUCT_QUERY = `
   query FirstProduct {
@@ -104,6 +104,7 @@ export const CART_CREATE_MUTATION = `mutation cartCreate($input: CartInput!) { c
 export const CART_LINES_ADD_MUTATION = `mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) { cartLinesAdd(cartId: $cartId, lines: $lines) { cart { id lines(first: 100) { edges { node { id merchandise { ... on ProductVariant { id } } } } } } userErrors { field message } } }`;
 export const CART_LINES_UPDATE_MUTATION = `mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) { cartLinesUpdate(cartId: $cartId, lines: $lines) { cart { id } userErrors { field message } } }`;
 export const CART_LINES_REMOVE_MUTATION = `mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) { cartLinesRemove(cartId: $cartId, lineIds: $lineIds) { cart { id } userErrors { field message } } }`;
+export const CART_DISCOUNT_CODES_UPDATE_MUTATION = `mutation cartDiscountCodesUpdate($cartId: ID!, $discountCodes: [String!]) { cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) { cart { id checkoutUrl } userErrors { field message } } }`;
 
 type UserError = { field: string[] | null; message: string };
 type CartLine = { node: { id: string; merchandise: { id: string } } };
@@ -112,21 +113,50 @@ function cartMissing(errors: UserError[]) {
   return errors.some((error) => /cart not found|does not exist/i.test(error.message));
 }
 
-function checkoutUrl(url: string) {
+export function formatCheckoutUrl(url: string, discountCode?: string | null) {
   const parsed = new URL(url);
   parsed.searchParams.set("channel", "online_store");
+  if (discountCode) {
+    parsed.searchParams.set("discount", discountCode);
+  }
   return parsed.toString();
 }
 
-export async function createShopifyCart(variantId: string, quantity: number) {
+export async function createShopifyCart(variantId: string, quantity: number, discountCode?: string | null) {
+  const input: { lines: Array<{ quantity: number; merchandiseId: string }>; discountCodes?: string[] } = {
+    lines: [{ quantity, merchandiseId: variantId }],
+  };
+  if (discountCode) {
+    input.discountCodes = [discountCode];
+  }
   const data = await storefrontApiRequest<{ cartCreate: { cart: { id: string; checkoutUrl: string; lines: { edges: CartLine[] } } | null; userErrors: UserError[] } }>(CART_CREATE_MUTATION, {
-    input: { lines: [{ quantity, merchandiseId: variantId }] },
+    input,
   });
   const result = data?.cartCreate;
   if (!result || result.userErrors.length || !result.cart) return null;
   const lineId = result.cart.lines.edges[0]?.node.id;
   if (!lineId) return null;
-  return { cartId: result.cart.id, checkoutUrl: checkoutUrl(result.cart.checkoutUrl), lineId };
+  return { cartId: result.cart.id, checkoutUrl: formatCheckoutUrl(result.cart.checkoutUrl, discountCode), lineId };
+}
+
+export async function updateShopifyCartDiscount(cartId: string, discountCode?: string | null) {
+  try {
+    const data = await storefrontApiRequest<{
+      cartDiscountCodesUpdate: {
+        cart: { id: string; checkoutUrl: string } | null;
+        userErrors: UserError[];
+      };
+    }>(CART_DISCOUNT_CODES_UPDATE_MUTATION, {
+      cartId,
+      discountCodes: discountCode ? [discountCode] : [],
+    });
+    if (data?.cartDiscountCodesUpdate?.cart?.checkoutUrl) {
+      return formatCheckoutUrl(data.cartDiscountCodesUpdate.cart.checkoutUrl, discountCode);
+    }
+  } catch {
+    // If discount update fails, fallback gracefully
+  }
+  return null;
 }
 
 export async function addShopifyCartLine(cartId: string, variantId: string, quantity: number) {
@@ -164,12 +194,12 @@ export const FALLBACK_PRODUCT: ShopifyProduct = {
     description:
       "Botella esférica de acero inoxidable de 285 ml con cuenco de silicona plegable integrado.",
     handle: STORE_PRODUCT_HANDLE,
-    priceRange: { minVariantPrice: { amount: "19.48", currencyCode: "EUR" } },
+    priceRange: { minVariantPrice: { amount: "17.99", currencyCode: "EUR" } },
     images: { edges: [] },
     variants: {
       edges: [
-        { node: fallbackVariant("fallback-pink", "Pink", "19.48") },
-        { node: fallbackVariant("fallback-blue", "Blue", "19.48") },
+        { node: fallbackVariant("fallback-pink", "Pink", "17.99") },
+        { node: fallbackVariant("fallback-blue", "Blue", "17.99") },
       ],
     },
     options: [{ name: "Color", values: ["Pink", "Blue"] }],
