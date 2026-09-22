@@ -286,13 +286,19 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
           <a href="#faq">Preguntas frecuentes</a>
         </div>
         <div className="footer-social" aria-label="Redes sociales">
-          <span className="footer-social-item" title="Instagram">
+          <a
+            href="https://www.instagram.com/bervona_/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-social-item transition-colors hover:text-foreground"
+            title="Instagram"
+          >
             <InstagramIcon className="size-4 shrink-0" />
             <span>Instagram: <strong className="font-medium text-foreground">bervona_</strong></span>
-          </span>
+          </a>
           <span className="hidden sm:inline text-muted-foreground/40">•</span>
           <a
-            href="https://www.tiktok.com/@bervona"
+            href="https://www.tiktok.com/@bervona.com"
             target="_blank"
             rel="noopener noreferrer"
             className="footer-social-item transition-colors hover:text-foreground"
