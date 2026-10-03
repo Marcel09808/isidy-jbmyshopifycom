@@ -11,11 +11,11 @@ import type { ShopifyProduct, ShopifyVariant } from "@/lib/shopify";
 import heroImage from "@/assets/bervona-hero.jpg";
 import lifestyleImage from "@/assets/bervona-lifestyle.jpg";
 import pink1 from "@/assets/drop-pink-1.jpg";
-
+import pink2 from "@/assets/drop-pink-2.jpg";
 import pink3 from "@/assets/drop-pink-3.jpg";
 import pink4 from "@/assets/drop-pink-4.jpg";
 import blue1 from "@/assets/drop-blue-1.jpg";
-
+import blue2 from "@/assets/drop-blue-2.jpg";
 import blue3 from "@/assets/drop-blue-3.jpg";
 import blue4 from "@/assets/drop-blue-4.jpg";
 
@@ -29,8 +29,8 @@ const features = [
 ];
 
 const colors = [
-  { label: "Rosa", match: /pink|rosa/i, gallery: [pink1, pink3, pink4], dot: "#f2a3bd", note: "Silicona rosa" },
-  { label: "Azul", match: /blue|azul|turq/i, gallery: [blue1, blue3, blue4], dot: "#37c6cd", note: "Silicona turquesa" },
+  { label: "Rosa", match: /pink|rosa/i, gallery: [heroImage, pink1, pink2, pink3, pink4], note: "Silicona rosa" },
+  { label: "Azul", match: /blue|azul|turq/i, gallery: [blue1, blue2, blue3, blue4], note: "Silicona turquesa" },
 ];
 
 const tickerItems = ["285 ml", "186 g", "Acero inoxidable", "Sin BPA", "Cuenco integrado", "Antigoteo", "Apta lavavajillas", "Envío gratis"];
@@ -81,9 +81,9 @@ function TikTokIcon({ className = "size-4" }: { className?: string }) {
 const euros = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
 
 export const packs = [
-  { qty: 1, units: "1 unidad", price: 17.99, compareAt: 24.99, note: "Para tu compañero", discountCode: null },
-  { qty: 2, units: "2 unidades", price: 31.99, compareAt: 35.98, note: "Una para cada paseo", discountCode: "PACK2" },
-  { qty: 3, units: "3 unidades", price: 44.99, compareAt: 53.97, note: "Mejor precio por unidad", popular: true, discountCode: "PACK3" },
+  { qty: 1, units: "1 unidad", note: "Para el paseo diario" },
+  { qty: 2, units: "2 unidades", note: "Una en casa y otra lista para salir" },
+  { qty: 3, units: "3 unidades", note: "Para varios paseos o varios perros" },
 ];
 
 export function BervonaStore({ product, unavailable = false }: { product: ShopifyProduct; unavailable?: boolean }) {
@@ -120,6 +120,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
 
   const activeColor = colors[colorIndex] ?? colors[0]!;
   const activePhoto = activeColor.gallery[photoIndex] ?? activeColor.gallery[0]!;
+  const unitPrice = Number(selected?.price.amount ?? product.node.priceRange.minVariantPrice.amount);
 
   const scrollToPacks = () => {
     setQuantity(3);
@@ -128,7 +129,8 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
 
   const addSelected = async () => {
     if (!selected) return;
-    const pack = packs.find((p) => p.qty === quantity) ?? packs[0];
+    const pack = packs.find((p) => p.qty === quantity);
+    if (!pack) return;
     const packVariant = findVariant(colors[colorIndex]!.match, quantity);
 
     if (packVariant && packVariant.id !== selected.id) {
@@ -144,12 +146,11 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
       return;
     }
 
-    const unitPrice = (pack.price / pack.qty).toFixed(2);
     const added = await addItem({
       product,
       variantId: selected.id,
       variantTitle: `${selected.title} (${pack.units})`,
-      price: { amount: unitPrice, currencyCode: selected.price?.currencyCode ?? "EUR" },
+      price: selected.price,
       quantity: pack.qty,
       selectedOptions: selected.selectedOptions,
     });
@@ -158,31 +159,30 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
 
   return (
     <main className="overflow-hidden">
+      <div className="announcement">Envío gratis a España <span>·</span> Bervona Drop para cada paseo</div>
       <header className="site-nav">
         <a href="#top" aria-label="Bervona, inicio"><BervonaMark /></a>
         <nav aria-label="Navegación principal" className="hidden items-center gap-8 md:flex">
-          <a href="#beneficios">Por qué Drop</a><a href="#como-funciona">Cómo funciona</a><a href="#packs">Comprar</a><a href="#faq">FAQ</a>
+          <a href="#beneficios">El producto</a><a href="#como-funciona">Cómo funciona</a><a href="#packs">Comprar</a><Link to="/opiniones">Opiniones</Link><a href="#faq">Preguntas</a>
         </nav>
         <CartDrawer />
       </header>
 
       <section id="top" className="hero-section">
         <div className="hero-copy">
-          <span className="hero-badge"><Sparkles /> Bervona Drop · 285 ml · acero inoxidable</span>
-          <h1>Todo lo que necesita.<br /><em>Nada que te pese.</em></h1>
-          <p>Agua y comida para tu perro en cualquier paseo, dentro de una botella compacta que se convierte en cuenco.</p>
+          <span className="hero-badge">Bervona presenta</span>
+          <h1>Bervona<br /><em>Drop.</em></h1>
+          <p>Una botella compacta para el agua de tu perro, con un cuenco de silicona que se despliega cuando toca parar.</p>
           <div className="flex flex-wrap items-center gap-4">
-            <Button variant="hero" size="xl" onClick={scrollToPacks}>Elegir mi pack <ChevronRight /></Button>
-            <a href="#beneficios" className="text-sm font-medium underline underline-offset-8">Descubrir el diseño</a>
+            <Button variant="hero" size="xl" onClick={scrollToPacks}>Elegir color y pack <ChevronRight /></Button>
+            <a href="#como-funciona" className="text-sm font-medium underline underline-offset-8">Ver cómo funciona</a>
           </div>
+          <span className="hero-detail">285 ml <span>·</span> 186 g <span>·</span> Acero inoxidable</span>
         </div>
         <div className="hero-visual">
-          <div className="product-halo" />
           <img src={heroImage} alt="Botella Bervona Drop esférica de acero con cuenco rosa plegable" width={1408} height={1408} fetchPriority="high" />
-          <span className="hero-note note-one"><strong>186 g</strong> ultraligera</span>
-          <span className="hero-note note-two"><strong>2 en 1</strong> agua + comida</span>
         </div>
-        <button className="scroll-cue" onClick={() => document.querySelector("#problema")?.scrollIntoView({ behavior: "smooth" })} aria-label="Ver más"><ArrowDown /></button>
+        <Button variant="ghost" size="icon" className="scroll-cue" onClick={() => document.querySelector("#problema")?.scrollIntoView({ behavior: "smooth" })} aria-label="Ver más"><ArrowDown /></Button>
       </section>
 
       <div className="ticker" aria-hidden="true">
@@ -216,7 +216,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
       </section>
 
       <section id="packs" ref={packsRef} className="pack-section section-shell">
-        <div className="pack-intro reveal"><p className="eyebrow">Elige tu Drop</p><h2>Color y pack.</h2><p>Elige el color de tu Bervona Drop y cuántas quieres llevarte.</p></div>
+        <div className="pack-intro reveal"><p className="eyebrow">Bervona Drop</p><h2>La tuya, a tu manera.</h2><p>Elige un color y cuántas unidades necesitas. El precio final se confirma en Shopify.</p></div>
 
         <div className="buy-layout">
           <div className="buy-gallery reveal">
@@ -225,33 +225,33 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
             </div>
             <div className="gallery-thumbs">
               {activeColor.gallery.map((src, i) => (
-                <button key={src} type="button" className={i === photoIndex ? "is-active" : ""} aria-label={`Foto ${i + 1} de ${activeColor.label}`} aria-pressed={i === photoIndex} onClick={() => setPhotoIndex(i)}>
+                <Button variant="ghost" key={src} type="button" className={i === photoIndex ? "is-active" : ""} aria-label={`Foto ${i + 1} de ${activeColor.label}`} aria-pressed={i === photoIndex} onClick={() => setPhotoIndex(i)}>
                   <img src={src} alt="" width={512} height={512} loading="lazy" />
-                </button>
+                </Button>
               ))}
             </div>
             <div className="color-tiles">
               {colors.map((color, i) => (
-                <button key={color.label} type="button" className={`color-tile ${i === colorIndex ? "is-active" : ""}`} aria-pressed={i === colorIndex} onClick={() => selectColor(i)}>
+                <Button variant="outline" key={color.label} type="button" className={`color-tile ${i === colorIndex ? "is-active" : ""}`} aria-pressed={i === colorIndex} onClick={() => selectColor(i)}>
                   <img src={color.gallery[0]} alt="" width={256} height={256} loading="lazy" />
-                  <span><b style={{ color: color.dot }}>{color.label}</b><small>{color.note}</small></span>
-                </button>
+                  <span><b>{color.label}</b><small>{color.note}</small></span>
+                </Button>
               ))}
             </div>
           </div>
 
           <div className="buy-panel reveal d2">
+            <div className="buy-heading"><p className="eyebrow">Botella + cuenco integrado</p><h3>Bervona Drop</h3><p>Para paseos en los que llevar agua no debería ocupar más espacio del necesario.</p><strong>Desde {euros.format(unitPrice)}</strong></div>
             <div className="pack-grid">
               {packs.map((pack) => {
                 const active = quantity === pack.qty;
-                return <button key={pack.units} type="button" className={`pack-card ${active ? "is-selected" : ""} ${pack.popular ? "is-popular" : ""}`} onClick={() => { setQuantity(pack.qty); setSelected(findVariant(colors[colorIndex]!.match, pack.qty) ?? selected); }} aria-pressed={active}>
-                  {pack.popular && <span className="popular-label">Mejor precio</span>}
+                return <Button variant="outline" key={pack.units} type="button" className={`pack-card ${active ? "is-selected" : ""}`} onClick={() => { setQuantity(pack.qty); setSelected(findVariant(colors[colorIndex]!.match, pack.qty) ?? selected); }} aria-pressed={active}>
                   <span className="radio-dot">{active && <Check />}</span>
                   <h3>{pack.units}</h3>
-                  <strong>{euros.format(pack.price)} <s>{euros.format(pack.compareAt)}</s></strong>
+                  <strong>{euros.format(unitPrice * pack.qty)}</strong>
                   <p>{pack.note}</p>
-                  <small>{euros.format(pack.price / pack.qty)} / unidad</small>
-                </button>;
+                  <small>{euros.format(unitPrice)} / unidad</small>
+                </Button>;
               })}
             </div>
 
@@ -270,6 +270,8 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
         </div>
       </section>
 
+      <section className="review-teaser"><div><p className="eyebrow">Opiniones sin filtros</p><h2>La experiencia, contada por quienes la usan.</h2><p>También compartimos lo que podría no encajarte: opiniones de compradores del mismo tipo de botella en otra plataforma, no compras de Bervona.</p></div><Button variant="outline" asChild><Link to="/opiniones">Leer opiniones <ChevronRight /></Link></Button></section>
+
       <section id="faq" className="faq-section section-shell">
         <div className="reveal"><p className="eyebrow">Preguntas frecuentes</p><h2>Todo claro antes de salir.</h2></div>
         <Accordion type="single" collapsible className="faq-list reveal d2">
@@ -283,6 +285,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
         <p>Hidratación sencilla para perros felices.</p>
         <div className="footer-nav">
           <Link to="/" hash="packs">Packs</Link>
+          <Link to="/opiniones">Opiniones</Link>
           <a href="#faq">Preguntas frecuentes</a>
         </div>
         <div className="footer-social" aria-label="Redes sociales">
