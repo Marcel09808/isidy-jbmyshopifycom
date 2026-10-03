@@ -23,6 +23,8 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "285 ml, 186 g, antigoteo y apta para lavavajillas. Packs de 1, 2 y 3 unidades.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(productQuery),

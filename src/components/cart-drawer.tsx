@@ -3,27 +3,10 @@ import { Loader2, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCartStore } from "@/stores/cart-store";
-import { packs } from "@/components/bervona-store";
 
 const euros = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
 
 export function getCartPricing(quantity: number, fallbackUnitAmount: number) {
-  const pack = packs.find((p) => p.qty === quantity);
-  if (pack) {
-    return {
-      total: pack.price,
-      unitPrice: pack.price / pack.qty,
-      discountLabel: pack.qty > 1 ? pack.units : null,
-    };
-  }
-  if (quantity > 3) {
-    const unitPrice = 44.99 / 3;
-    return {
-      total: quantity * unitPrice,
-      unitPrice,
-      discountLabel: `${quantity} unidades`,
-    };
-  }
   return {
     total: quantity * fallbackUnitAmount,
     unitPrice: fallbackUnitAmount,
@@ -38,7 +21,7 @@ export function CartDrawer({ open, onOpenChange }: { open?: boolean; onOpenChang
   const { items, isLoading, isSyncing, checkoutUrl, updateQuantity, removeItem, syncCart } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const total = items.reduce((sum, item) => {
-    const pricing = getCartPricing(item.quantity, Number(item.price.amount) || 17.99);
+    const pricing = getCartPricing(item.quantity, Number(item.price.amount) || 0);
     return sum + pricing.total;
   }, 0);
 
@@ -65,7 +48,7 @@ export function CartDrawer({ open, onOpenChange }: { open?: boolean; onOpenChang
           <div className="flex min-h-0 flex-1 flex-col pt-8">
             <div className="flex-1 space-y-5 overflow-y-auto">
               {items.map((item) => {
-                const pricing = getCartPricing(item.quantity, Number(item.price.amount) || 17.99);
+                const pricing = getCartPricing(item.quantity, Number(item.price.amount) || 0);
                 return (
                   <article key={item.variantId} className="flex gap-4 border-b border-border pb-5">
                     {item.product.node.images.edges[0]?.node.url ? <img className="size-20 rounded-sm object-cover" src={item.product.node.images.edges[0].node.url} alt={item.product.node.title} /> : <div className="size-20 rounded-sm bg-secondary" />}
