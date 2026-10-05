@@ -170,7 +170,7 @@ h1,h2,h3,.font-display { font-family: "Instrument Serif", Georgia, serif; font-w
 html { scroll-behavior: smooth; }
 #packs,#beneficios,#faq,#como-funciona { scroll-margin-top: 5rem; }
 @keyframes enter { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: translateY(0) } }
-.reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease,transform .7s ease; }
+.reveal { opacity: 1; transform: none; animation: enter .7s ease both; }
 .reveal.is-in { opacity: 1; transform: none; }
 .section-shell { padding: clamp(4rem,7vw,7rem) max(24px,calc((100vw - 1280px)/2)); }
 .eyebrow { text-transform: uppercase; font-size: .72rem; font-weight: 700; color: var(--primary); letter-spacing: .12em; }
@@ -251,7 +251,7 @@ html { scroll-behavior: smooth; }
 .radio-dot { position: absolute; right: 1rem; top: 1.05rem; width: 17px; height: 17px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--primary); color: var(--primary); }
 .radio-dot svg { width: 12px; height: 12px; }
 .pack-action { display: grid; gap: .6rem; margin: 1rem 0 1.5rem; }
-.pack-action button { width: 100%; border-radius: 3px; }
+.pack-action button { width: 100%; border-radius: 3px; background: var(--gradient-primary); color: var(--primary-foreground); }
 .pack-action p { font-size: .78rem; }
 .buy-perks { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
 .buy-perks li { display: flex; gap: .7rem; align-items: start; }
