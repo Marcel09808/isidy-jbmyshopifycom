@@ -170,7 +170,7 @@ h1,h2,h3,.font-display { font-family: "Instrument Serif", Georgia, serif; font-w
 html { scroll-behavior: smooth; }
 #packs,#beneficios,#faq,#como-funciona { scroll-margin-top: 5rem; }
 @keyframes enter { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: translateY(0) } }
-.reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease,transform .7s ease; }
+.reveal { opacity: 1; transform: none; animation: enter .7s ease both; }
 .reveal.is-in { opacity: 1; transform: none; }
 .section-shell { padding: clamp(4rem,7vw,7rem) max(24px,calc((100vw - 1280px)/2)); }
 .eyebrow { text-transform: uppercase; font-size: .72rem; font-weight: 700; color: var(--primary); letter-spacing: .12em; }
