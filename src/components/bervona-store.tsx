@@ -10,14 +10,13 @@ import type { ShopifyProduct, ShopifyVariant } from "@/lib/shopify";
 import { reviews } from "@/lib/reviews";
 import heroImage from "@/assets/bervona-hero.jpg";
 import lifestyleImage from "@/assets/bervona-lifestyle.jpg";
-import pink1 from "@/assets/drop-pink-1.jpg";
-import pink2 from "@/assets/drop-pink-2.jpg";
+import pinkNatural1 from "@/assets/drop-pink-natural-1.jpg";
+import pinkNatural2 from "@/assets/drop-pink-natural-2.jpg";
 import pink3 from "@/assets/drop-pink-3.jpg";
-import pink4 from "@/assets/drop-pink-4.jpg";
 import blue1 from "@/assets/drop-blue-1.jpg";
-import blue2 from "@/assets/drop-blue-2.jpg";
+import blueNatural1 from "@/assets/drop-blue-natural-1.jpg";
+import blueNatural2 from "@/assets/drop-blue-natural-2.jpg";
 import blue3 from "@/assets/drop-blue-3.jpg";
-import blue4 from "@/assets/drop-blue-4.jpg";
 
 const features = [
   { icon: Droplets, title: "Cuenco instantáneo", text: "Despliega la silicona integrada y sirve al momento." },
@@ -29,8 +28,8 @@ const features = [
 ];
 
 const colors = [
-  { label: "Rosa", match: /pink|rosa/i, gallery: [heroImage, pink1, pink2, pink3, pink4], note: "Silicona rosa" },
-  { label: "Azul", match: /blue|azul|turq/i, gallery: [blue1, blue2, blue3, blue4], note: "Silicona turquesa" },
+  { label: "Rosa", match: /pink|rosa/i, gallery: [heroImage, pinkNatural1, pinkNatural2, pink3], note: "Silicona rosa" },
+  { label: "Azul", match: /blue|azul|turq/i, gallery: [blue1, blueNatural1, blueNatural2, blue3], note: "Silicona turquesa" },
 ];
 
 const tickerItems = ["285 ml", "186 g", "Acero inoxidable", "Sin BPA", "Cuenco integrado", "Antigoteo", "Apta lavavajillas", "Envío gratis"];
