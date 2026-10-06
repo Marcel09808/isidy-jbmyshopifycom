@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, Check, ChevronRight, Droplets, Feather, Loader2, LockKeyhole, PackageCheck, RotateCcw, ShieldCheck, Sparkles, Truck, Utensils, WashingMachine } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { BervonaLogo, BervonaMark } from "@/components/bervona-logo";
@@ -8,6 +7,7 @@ import { CartDrawer } from "@/components/cart-drawer";
 import { useCartSync } from "@/hooks/use-cart-sync";
 import { useCartStore } from "@/stores/cart-store";
 import type { ShopifyProduct, ShopifyVariant } from "@/lib/shopify";
+import { reviews } from "@/lib/reviews";
 import heroImage from "@/assets/bervona-hero.jpg";
 import lifestyleImage from "@/assets/bervona-lifestyle.jpg";
 import pink1 from "@/assets/drop-pink-1.jpg";
@@ -163,7 +163,7 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
       <header className="site-nav">
         <a href="#top" aria-label="Bervona, inicio"><BervonaMark /></a>
         <nav aria-label="Navegación principal" className="hidden items-center gap-8 md:flex">
-          <a href="#beneficios">El producto</a><a href="#como-funciona">Cómo funciona</a><a href="#packs">Comprar</a><Link to="/opiniones">Opiniones</Link><a href="#faq">Preguntas</a>
+          <a href="#beneficios">El producto</a><a href="#como-funciona">Cómo funciona</a><a href="#packs">Comprar</a><a href="#opiniones">Opiniones</a><a href="#faq">Preguntas</a>
         </nav>
         <CartDrawer />
       </header>
@@ -270,7 +270,26 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
         </div>
       </section>
 
-      <section className="review-teaser"><div><p className="eyebrow">Opiniones sin filtros</p><h2>La experiencia, contada por quienes la usan.</h2><p>También compartimos lo que podría no encajarte: opiniones de compradores del mismo tipo de botella en otra plataforma, no compras de Bervona.</p></div><Button variant="outline" asChild><Link to="/opiniones">Leer opiniones <ChevronRight /></Link></Button></section>
+      <section id="opiniones" className="reviews-section section-shell">
+        <div className="reviews-section-heading reveal">
+          <p className="eyebrow">Experiencias reales</p>
+          <h2>Lo que cuentan<br /><em>quienes la han probado.</em></h2>
+          <p>Opiniones compartidas por compradores del mismo tipo de botella en otra plataforma. No son compras realizadas en Bervona ni verificadas por nosotros. Hemos abreviado ligeramente algunos textos sin cambiar su sentido.</p>
+        </div>
+        <div className="reviews-grid">
+          {reviews.map((review, index) => (
+            <article className={`review-card reveal d${(index % 6) + 1}`} key={`${review.author}-${review.date}`}>
+              <span className="review-card-number">{String(index + 1).padStart(2, "0")}</span>
+              <blockquote>“{review.quote}”</blockquote>
+              <p>{review.author} <span aria-hidden="true">·</span> {review.date} <span aria-hidden="true">·</span> Color indicado: {review.color}</p>
+            </article>
+          ))}
+        </div>
+        <div className="reviews-note reveal">
+          <p>Para perros grandes o rutas largas, conviene llevar agua adicional.</p>
+          <Button variant="hero" size="xl" onClick={scrollToPacks}>Elegir mi Drop <ChevronRight /></Button>
+        </div>
+      </section>
 
       <section id="faq" className="faq-section section-shell">
         <div className="reveal"><p className="eyebrow">Preguntas frecuentes</p><h2>Todo claro antes de salir.</h2></div>
@@ -284,8 +303,8 @@ export function BervonaStore({ product, unavailable = false }: { product: Shopif
         <BervonaLogo />
         <p>Hidratación sencilla para perros felices.</p>
         <div className="footer-nav">
-          <Link to="/" hash="packs">Packs</Link>
-          <Link to="/opiniones">Opiniones</Link>
+          <a href="#packs">Packs</a>
+          <a href="#opiniones">Opiniones</a>
           <a href="#faq">Preguntas frecuentes</a>
         </div>
         <div className="footer-social" aria-label="Redes sociales">
